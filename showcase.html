@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目展示 · 海帆智擎</title>
+<meta name="description" content="海帆智擎系统架构、技术创新、IMO合规分析与关键技术指标——面向智慧海洋绿色通航的完整技术方案。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   海帆智擎 · 展示页设计系统 v8
+   基准: DESIGN_VARIANCE=8  MOTION_INTENSITY=6  VISUAL_DENSITY=4
+   ============================================================ */
+:root {
+  --bg:        #f1f5f9;
+  --surface:   #ffffff;
+  --text:      #0f172a;
+  --text-mid:  #334155;
+  --muted:     #64748b;
+  --faint:     #94a3b8;
+  --accent:    #155e75;
+  --accent-hv: #0e4255;
+  --accent-lt: #ecfeff;
+  --accent-pale:#f0f9fb;
+  --border:    #cbd5e1;
+  --border-lt: #e2e8f0;
+  --data-up:   #0d9488;
+  --data-warn: #a16207;
+  --data-down: #b91c1c;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15,23,42,0.06);
+  --shadow-lg: 0 20px 40px -15px rgba(15,23,42,0.06);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --mw: 1200px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+
+body {
+  font-family: "Geist", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.75; font-size: 15px;
+  font-weight: 450; font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+h1, h2, h3 { font-weight: 750; color: var(--text); letter-spacing: -0.025em; }
+h1 { font-size: clamp(2rem, 4.5vw, 2.8rem); letter-spacing: -0.035em; line-height: 1.08; font-weight: 850; }
+h2 { font-size: 1.5rem; letter-spacing: -0.02em; font-weight: 750; }
+h3 { font-size: 1.1rem; font-weight: 650; letter-spacing: -0.015em; }
+
+.wrap { max-width: var(--mw); margin: 0 auto; padding: 0 32px; }
+
+/* ── Scroll Reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.04s; }
+.reveal-d2 { transition-delay: 0.10s; }
+.reveal-d3 { transition-delay: 0.16s; }
+.reveal-d4 { transition-delay: 0.22s; }
+.reveal-d5 { transition-delay: 0.28s; }
+.reveal-d6 { transition-delay: 0.34s; }
+
+/* ── Navigation — Liquid Glass ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(241, 245, 249, 0.72);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 17px; color: var(--text);
+  letter-spacing: -0.01em; text-decoration: none;
+}
+.nav-brand .brand-icon { width: 32px; height: 32px; display: grid; place-items: center; }
+.nav-brand .brand-icon svg { width: 24px; height: 24px; }
+.nav-links { display: flex; gap: 2px; }
+.nav-links a {
+  text-decoration: none; color: var(--muted); font-size: 13px; font-weight: 600;
+  padding: 7px 16px; border-radius: var(--radius-sm);
+  transition: all 0.22s var(--ease-out); letter-spacing: -0.005em;
+}
+.nav-links a:hover, .nav-links a.on { color: var(--text); background: var(--accent-lt); }
+
+/* ── Hero ── */
+.hero { padding: 80px 0 56px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hero-eyebrow::before { content: ""; width: 28px; height: 1.5px; background: var(--accent); border-radius: 2px; }
+.hero h1 { margin-bottom: 16px; max-width: 720px; }
+.hero .lead {
+  font-size: 1.05rem; color: var(--text-mid);
+  max-width: 620px; line-height: 1.8;
+}
+
+/* ── Section ── */
+.section { padding: 0 0 80px; }
+.section-header { margin-bottom: 40px; padding-top: 56px; border-top: 1px solid var(--border); }
+.section-header h2 { margin-bottom: 6px; }
+.section-header p  { color: var(--muted); font-size: 14px; }
+
+/* ── Architecture Grid — Staggered Masonry (DESIGN_VARIANCE=8) ── */
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+.arch-item {
+  background: var(--surface); padding: 32px 28px;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  transition: all 0.35s var(--ease-out);
+  box-shadow: var(--shadow-sm);
+}
+.arch-item:hover { background: var(--accent-pale); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.arch-item:nth-child(1) { grid-column: span 2; padding-bottom: 48px; }
+.arch-item:nth-child(3) { padding-top: 56px; }
+.arch-item:nth-child(4) { grid-column: span 2; padding-top: 48px; }
+.arch-item:nth-child(6) { padding-bottom: 56px; }
+.arch-item .arch-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 12px;
+}
+.arch-item h3 { margin-bottom: 6px; }
+.arch-item p  { color: var(--text-mid); font-size: 14px; line-height: 1.75; }
+
+/* ── Innovation — Zig-zag wide-narrow ── */
+.innov-list { display: grid; gap: 48px; }
+.innov-row {
+  display: grid; grid-template-columns: 1fr 280px; gap: 48px; align-items: start;
+}
+.innov-row:nth-child(even) { grid-template-columns: 280px 1fr; }
+.innov-row:nth-child(even) .innov-side { order: -1; }
+.innov-body h3 { font-size: 1.22rem; margin-bottom: 10px; }
+.innov-body p  { color: var(--muted); font-size: 14px; line-height: 1.78; }
+.innov-side {
+  font-size: 13px; color: var(--muted);
+  border-left: 3px solid var(--accent-lt);
+  padding-left: 18px; line-height: 1.7;
+}
+.innov-side b {
+  display: block; color: var(--accent); font-size: 2rem; font-weight: 900;
+  margin-bottom: 6px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  line-height: 1;
+}
+.source-badge {
+  display: inline-block; margin-top: 8px; padding: 3px 10px;
+  border-radius: 999px; background: var(--accent-lt);
+  color: var(--accent); font-size: 11px; font-weight: 700;
+}
+
+/* ── Mode Table ── */
+.mode-table {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.mode-table th, .mode-table td { padding: 16px 20px; text-align: left; border-bottom: 1px solid var(--border-lt); }
+.mode-table th {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--faint); text-transform: uppercase;
+  background: var(--accent-pale);
+  font-family: "Geist", "PingFang SC", sans-serif;
+}
+.mode-table td { color: var(--text-mid); }
+.mode-table .mode-name { font-weight: 700; color: var(--text); font-size: 14px; }
+.mode-table .mode-badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--accent-lt); color: var(--accent);
+}
+.mode-table tbody tr {
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+}
+.mode-table tbody tr::before {
+  content: ""; position: absolute; inset: 0; border-radius: 0;
+  border-left: 3px solid transparent;
+  transition: border-color 0.3s var(--ease-out);
+}
+.mode-table tbody tr:hover {
+  background: var(--accent-pale);
+  box-shadow: inset 0 0 0 1px var(--accent-lt);
+}
+.mode-table tbody tr:hover::before { border-left-color: var(--accent); }
+
+/* ── CII Section ── */
+.cii-layout { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 36px; align-items: start; }
+.cii-compare {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.cii-compare table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cii-compare th, .cii-compare td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border-lt); }
+.cii-compare th { background: var(--accent-pale); font-weight: 700; font-size: 12px; color: var(--text); }
+.cii-compare td:last-child { color: var(--data-up); font-weight: 600; }
+.cii-rating { display: grid; gap: 20px; }
+.cii-card {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 28px; background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s var(--ease-out);
+}
+.cii-card:hover { box-shadow: var(--shadow-md); }
+.cii-card .cii-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--faint); text-transform: uppercase; margin-bottom: 12px; }
+.cii-card .cii-grade { font-size: 4.5rem; font-weight: 900; line-height: 1; letter-spacing: -0.04em; }
+.cii-card .cii-grade.grade-c { color: var(--data-warn); }
+.cii-card .cii-grade.grade-b { color: var(--data-up); }
+.cii-card .cii-desc { font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.65; }
+.cii-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 16px; }
+.cii-bar span { height: 6px; border-radius: 3px; background: var(--border-lt); }
+.cii-bar .ci-a { background: #0d9488; }
+.cii-bar .ci-b { background: #65a30d; }
+.cii-bar .ci-c { background: #ca8a04; }
+.cii-bar .ci-d { background: #d97706; }
+.cii-bar .ci-e { background: #dc2626; }
+
+/* ── KPI Strip — Border-separated ── */
+.kpi-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.kpi-strip .kpi {
+  padding: 32px 28px 28px;
+  border-right: 1px solid var(--border);
+}
+.kpi-strip .kpi:last-child { border-right: none; }
+.kpi .kpi-val {
+  font-size: 1.9rem; font-weight: 900; color: var(--text);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.03em; line-height: 1;
+}
+.kpi .kpi-lbl { font-size: 12px; color: var(--faint); margin-top: 6px; }
+
+/* ── Evidence Grid ── */
+.evidence-flow {
+  display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr;
+  gap: 8px; align-items: center; margin-bottom: 24px;
+}
+.flow-node {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 16px 14px;
+  text-align: center; font-weight: 700; color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+.flow-node:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.flow-node small { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 500; }
+.flow-arrow {
+  text-align: center; color: var(--accent); font-weight: 900; font-size: 20px;
+  opacity: 0.5;
+}
+
+.part-legend {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px;
+}
+.part-legend span {
+  display: inline-flex; gap: 5px; align-items: center;
+  border: 1px solid var(--border); background: var(--surface);
+  border-radius: 999px; padding: 5px 12px;
+  font-size: 12px; color: var(--muted);
+}
+.part-legend b { color: var(--accent); font-variant-numeric: tabular-nums; }
+
+.evidence-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.evidence-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s var(--ease-out);
+  transform-style: preserve-3d; perspective: 800px;
+}
+.evidence-card:hover { box-shadow: var(--shadow-lg); }
+.evidence-card .tilt-inner {
+  transition: transform 0.15s ease-out;
+}
+.evidence-img-wrap {
+  position: relative; background: #fff;
+  border-bottom: 1px solid var(--border-lt);
+  min-height: 260px; display: grid; place-items: center;
+}
+.evidence-card img { width: 100%; height: 300px; object-fit: contain; display: block; }
+.evidence-card figcaption { padding: 20px; }
+.evidence-card h3 { margin-bottom: 8px; font-size: 1rem; }
+.evidence-card p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.evidence-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.evidence-tags span {
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  background: var(--accent-lt); padding: 3px 10px; border-radius: 999px;
+}
+.energy-label {
+  position: absolute; left: 14px; top: 14px;
+  background: rgba(21,94,117,0.92); color: #fff;
+  border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 700;
+}
+.energy-label.amber { background: rgba(180,83,9,0.9); }
+.energy-label.teal { background: rgba(13,148,136,0.9); }
+.energy-path {
+  position: absolute; right: 14px; bottom: 14px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--border);
+  border-radius: 999px; padding: 5px 12px;
+  color: var(--accent); font-size: 12px; font-weight: 700;
+}
+
+.file-note {
+  margin-top: 18px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--accent-pale);
+  padding: 16px 20px;
+  color: var(--muted); font-size: 13px; line-height: 1.7;
+}
+
+/* ── Footer ── */
+.foot { border-top: 1px solid var(--border); padding: 32px 0; margin-top: 32px; }
+.foot-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.foot p { color: var(--faint); font-size: 12px; }
+.foot a { color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; }
+.foot a:hover { color: var(--text); }
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .arch-grid { grid-template-columns: 1fr; gap: 10px; }
+  .arch-item:nth-child(1),
+  .arch-item:nth-child(3),
+  .arch-item:nth-child(4),
+  .arch-item:nth-child(6) { grid-column: auto; padding: 28px 24px; }
+  .innov-row,
+  .innov-row:nth-child(even) { grid-template-columns: 1fr; gap: 20px; }
+  .innov-row:nth-child(even) .innov-side { order: 0; }
+  .cii-layout { grid-template-columns: 1fr; }
+  .kpi-strip { grid-template-columns: 1fr 1fr; }
+  .evidence-grid { grid-template-columns: 1fr; }
+  .evidence-flow { grid-template-columns: 1fr; }
+  .flow-arrow { display: none; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 20px; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .kpi-strip { grid-template-columns: 1fr; }
+  .kpi-strip .kpi { border-right: none; border-bottom: 1px solid var(--border); }
+  .kpi-strip .kpi:last-child { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">
+    <span class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+    </span>
+    海帆智擎
+  </a>
+  <div class="nav-links">
+    <a href="index.html">返回入口</a>
+    <a class="on" href="showcase.html">项目展示</a>
+    <a href="dashboard.html">驾驶舱</a>
+    <a href="visualizer.html">可视化</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <section class="hero reveal">
+    <span class="hero-eyebrow">Project Overview</span>
+    <h1>面向绿色智慧航运的<br>智能滚筒帆系统技术方案</h1>
+    <p class="lead">融合废气余能回收、滚筒帆助航、轻量评分与安全规则——从硬件装置到智能决策到仿真展示的完整技术闭环。</p>
+  </section>
+
+  <!-- 六层架构 -->
+  <section class="section" id="arch">
+    <div class="section-header reveal">
+      <h2>六层系统架构</h2>
+      <p>从数据采集到安全保护的完整技术栈</p>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-item reveal reveal-d1">
+        <div class="arch-label">Layer 1</div>
+        <h3>感知层</h3>
+        <p>集成风速风向仪、波浪雷达、主机 ECU、排气背压传感器与 AIS 数据，构建多源异构感知网络。当前版本预留 6 类船舶与环境数据接口，并采用本地样本库进行演示。</p>
+      </div>
+      <div class="arch-item reveal reveal-d2">
+        <div class="arch-label">Layer 2</div>
+        <h3>设备层</h3>
+        <p>滚筒帆转子（1–6 座可配置）、废气透平、进气/旁通调节阀与传动结构。滚筒帆直径 3.2 m，高 18–24 m，转速范围 30–160 rpm。</p>
+      </div>
+      <div class="arch-item reveal reveal-d3">
+        <div class="arch-label">Layer 3</div>
+        <h3>预测层</h3>
+        <p>演示级轻量评分模型输入风速、风向、船速、主机负荷与海况等级，结合安全规则校核输出推荐策略。当前版本用于趋势判断与原型展示。</p>
+      </div>
+      <div class="arch-item reveal reveal-d4">
+        <div class="arch-label">Layer 4</div>
+        <h3>安全层</h3>
+        <p>排气背压保护（阈值 25 kPa 自动旁通）、恶劣海况锁定（≥ 5 级停止助航）、人工急停联锁。安全规则引擎独立于轻量评分模型链路运行。</p>
+      </div>
+      <div class="arch-item reveal reveal-d5">
+        <div class="arch-label">Layer 5</div>
+        <h3>展示层</h3>
+        <p>驾驶舱大屏（实时态势）、机理可视化（物理动画）、Streamlit 仿真平台（交互决策）——三个界面分别面向监控、解释与实验场景。</p>
+      </div>
+      <div class="arch-item reveal reveal-d6">
+        <div class="arch-label">Layer 6</div>
+        <h3>复盘层</h3>
+        <p>航次碳账本自动计算每段航程的 CO₂ 减排量、等效节能与 CII 改善，形成可追溯、可审计的绿色航运数据链。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 四大创新 -->
+  <section class="section" id="innovation">
+    <div class="section-header reveal">
+      <h2>技术创新点</h2>
+      <p>每一项都面向实际航运场景的工程约束</p>
+    </div>
+    <div class="innov-list">
+      <div class="innov-row reveal reveal-d1">
+        <div class="innov-body">
+          <h3>废气余能驱动</h3>
+          <p>传统滚筒帆依赖独立电机驱动，额外消耗船舶电力。海帆智擎通过废气透平回收主机排气能量驱动滚筒旋转，在中东—东亚样本工况中，简化模型估算可降低外部供能需求约 62%，系统综合能效比约 68%；该结果属于样本工况估算，需待台架与实船验证。</p>
+        </div>
+        <div class="innov-side">
+          <b>62<span style="font-size:0.5em;font-weight:700">%</span></b>
+          外部供能降低比例<br>（样本航线估算）
+          <span class="source-badge">待台架验证</span>
+        </div>
+      </div>
+      <div class="innov-row reveal reveal-d2">
+        <div class="innov-body">
+          <h3>轻量评分与安全规则控制</h3>
+          <p>输入统一默认工况参数（风速 12.6 m/s、风向 128°、船速 14.2 kn、主机负荷 72%），轻量评分模型与安全规则共同生成推荐策略。该结果用于竞赛原型的趋势判断和交互展示，不替代实船控制。</p>
+        </div>
+        <div class="innov-side">
+          <b>规则<span style="font-size:0.5em;font-weight:700">校核</span></b>
+          决策链路<br>（轻量评分 + 规则校核）
+        </div>
+      </div>
+      <div class="innov-row reveal reveal-d3">
+        <div class="innov-body">
+          <h3>典型航区识别与模式切换</h3>
+          <p>系统将航线划分为侧风富集区、低风区、恶劣海况区等典型航区，自动切换经济节能、性能优先、主机保护与安全锁定四种运行模式。基于本地样本库的规则回放，模式切换一致率约 91%，待更多真实航次数据验证。</p>
+        </div>
+        <div class="innov-side">
+          <b>91<span style="font-size:0.5em;font-weight:700">%</span></b>
+          航区识别准确率<br>（本地样本库演示）
+          <span class="source-badge">待实船验证</span>
+        </div>
+      </div>
+      <div class="innov-row reveal reveal-d4">
+        <div class="innov-body">
+          <h3>航次碳账本与 IMO 合规</h3>
+          <p>每次航行自动生成碳账本——记录每段航程的节能收益、CO₂ 减排量与 CII 评级变化——为船东提供可量化的绿色航运证据，直接支撑 IMO DCS 与 CII 合规报告。</p>
+        </div>
+        <div class="innov-side">
+          <b>+0.8<span style="font-size:0.5em;font-weight:700">级</span></b>
+          CII 评级提升<br>（简化模型计算）
+          <span class="source-badge">非官方核算</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 运行模式 -->
+  <section class="section" id="modes">
+    <div class="section-header reveal">
+      <h2>智能运行模式</h2>
+      <p>四种模式覆盖正常航行到极端工况的完整状态空间</p>
+    </div>
+    <div class="reveal" style="overflow-x:auto;">
+      <table class="mode-table">
+        <thead>
+          <tr><th>模式</th><th>触发条件</th><th>系统行为</th><th>适用场景</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mode-name">经济节能</td>
+            <td>风速 6–20 m/s，海况 ≤ 3 级，主机负荷适中</td>
+            <td>优先降低油耗与碳排放，滚筒帆以最佳效率转速运行</td>
+            <td><span class="mode-badge">默认模式</span></td>
+          </tr>
+          <tr>
+            <td class="mode-name">性能优先</td>
+            <td>航期紧张，或逆风/侧风条件有利</td>
+            <td>在安全约束内最大化推力输出，允许更高转速</td>
+            <td><span class="mode-badge">手动激活</span></td>
+          </tr>
+          <tr>
+            <td class="mode-name">主机保护</td>
+            <td>排气背压 ≥ 22 kPa，或主机负荷 &gt; 88%</td>
+            <td>自动增大旁通阀开度，减少废气取能，保护主机</td>
+            <td><span class="mode-badge">自动触发</span></td>
+          </tr>
+          <tr>
+            <td class="mode-name">安全锁定</td>
+            <td>海况 ≥ 5 级，或风速 &gt; 25 m/s</td>
+            <td>滚筒帆停转并锁定，系统进入纯监测模式</td>
+            <td><span class="mode-badge">自动触发</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 装置结构与传动链路证据 -->
+  <section class="section" id="evidence">
+    <div class="section-header reveal">
+      <h2>装置结构与传动链路证据区</h2>
+      <p>突出硬件创新：废气透平、传动结构、滚筒帆与能量链路</p>
+    </div>
+
+    <div class="evidence-flow reveal">
+      <div class="flow-node">主机废气<small>排气能量输入</small></div>
+      <div class="flow-arrow" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="flow-node">轴流透平<small>取能与降压约束</small></div>
+      <div class="flow-arrow" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="flow-node">齿轮/传动单元<small>转速匹配与传递</small></div>
+      <div class="flow-arrow" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="flow-node">滚筒帆旋转<small>形成马格努斯助航力</small></div>
+    </div>
+    <p class="file-note reveal"><strong>图例说明：</strong>结构编号用于对应管路、阀门、透平、传动件、轴承密封和滚筒帆筒体等部件；箭头用于说明"主机废气—透平取能—齿轮传动—滚筒帆旋转—马格努斯推力"的能量链路。</p>
+    <div class="part-legend reveal">
+      <span><b>1/2</b> 排气入口、取能/旁通支路</span>
+      <span><b>3</b> 废气透平/叶轮单元</span>
+      <span><b>4</b> 控制与执行机构</span>
+      <span><b>5</b> 立式滚筒帆筒体</span>
+      <span><b>6</b> 底部接口</span>
+      <span><b>7/8</b> 阀门组件</span>
+      <span><b>9</b> 齿轮/传动件</span>
+      <span><b>10</b> 底座支承</span>
+      <span><b>11/12</b> 轴承/密封圈</span>
+      <span><b>201/202</b> 双排气管路</span>
+    </div>
+    <div class="evidence-grid">
+      <figure class="evidence-card reveal reveal-d1">
+        <div class="evidence-img-wrap">
+          <img src="assets/evidence/evidence_01_pipe_top.jpg" alt="双管路与旁通阀总体布置" loading="lazy">
+          <span class="energy-label amber">废气管路</span>
+          <span class="energy-path">1/2 → 7/8 → 201/202</span>
+        </div>
+        <figcaption>
+          <h3>双管路与旁通阀总体布置</h3>
+          <p>展示排气主通道、取能支路、旁通支路和阀门组件的连接关系，是"取能不牺牲主机安全"的结构依据。</p>
+          <div class="evidence-tags"><span>结构建模图</span><span>待台架验证</span></div>
+        </figcaption>
+      </figure>
+      <figure class="evidence-card reveal reveal-d2">
+        <div class="evidence-img-wrap">
+          <img src="assets/evidence/evidence_02_rotor_base_assembly.jpg" alt="旋筒帆底座与双排气管路装配" loading="lazy">
+          <span class="energy-label">装配关系</span>
+          <span class="energy-path">管路 → 底座 → 筒体</span>
+        </div>
+        <figcaption>
+          <h3>旋筒帆底座与双排气管路装配</h3>
+          <p>说明滚筒帆底座、双排气管路、阀门组件与传动机构之间的空间关系，支撑装置化方案表达。</p>
+          <div class="evidence-tags"><span>结构建模图</span><span>待台架验证</span></div>
+        </figcaption>
+      </figure>
+      <figure class="evidence-card reveal reveal-d3">
+        <div class="evidence-img-wrap">
+          <img src="assets/evidence/evidence_03_exploded_structure.jpg" alt="滚筒帆爆炸结构图" loading="lazy">
+          <span class="energy-label teal">部件分解</span>
+          <span class="energy-path">筒体 / 轴承 / 底座 / 管路</span>
+        </div>
+        <figcaption>
+          <h3>滚筒帆爆炸结构图</h3>
+          <p>展示筒体、底部支承、轴承圈、密封件、传动部件与管路接口，完整呈现硬件系统组成。</p>
+          <div class="evidence-tags"><span>结构分解</span><span>待装配验证</span></div>
+        </figcaption>
+      </figure>
+      <figure class="evidence-card reveal reveal-d4">
+        <div class="evidence-img-wrap">
+          <img src="assets/evidence/evidence_04_rotor_column_support.jpg" alt="立式滚筒帆与底部支承结构" loading="lazy">
+          <span class="energy-label">立式筒体</span>
+          <span class="energy-path">支承 → 旋转 → 推力</span>
+        </div>
+        <figcaption>
+          <h3>立式滚筒帆与底部支承结构</h3>
+          <p>突出高筒体、底部轴承与连接件的支承关系，为后续强度校核、振动分析和转速匹配预留依据。</p>
+          <div class="evidence-tags"><span>结构建模图</span><span>待强度校核</span></div>
+        </figcaption>
+      </figure>
+      <figure class="evidence-card reveal reveal-d5">
+        <div class="evidence-img-wrap">
+          <img src="assets/evidence/evidence_05_turbine_valve_pipeline.jpg" alt="废气透平阀门管路连接" loading="lazy">
+          <span class="energy-label amber">取能链路</span>
+          <span class="energy-path">废气 → 透平 → 传动</span>
+        </div>
+        <figcaption>
+          <h3>废气透平—阀门—管路连接</h3>
+          <p>显示透平取能单元与阀门、管路之间的连接路径，直接对应可视化页面中的废气粒子和能量链路动画。</p>
+          <div class="evidence-tags"><span>核心证据图</span><span>待背压验证</span></div>
+        </figcaption>
+      </figure>
+      <figure class="evidence-card reveal reveal-d6">
+        <div class="evidence-img-wrap">
+          <img src="assets/evidence/evidence_06_turbine_drive_unit.jpg" alt="透平齿轮驱动单元局部" loading="lazy">
+          <span class="energy-label teal">传动单元</span>
+          <span class="energy-path">透平 → 齿轮 → 旋转</span>
+        </div>
+        <figcaption>
+          <h3>透平/齿轮驱动单元局部</h3>
+          <p>突出取能部件、齿轮传动和执行机构，说明系统不是单纯软件预测，而有明确机械传动设想。</p>
+          <div class="evidence-tags"><span>局部结构</span><span>待台架验证</span></div>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="file-note reveal">以上图片来自项目结构建模图，用于说明部件组成、管路走向和能量链路；当前仍属于竞赛原型阶段，需通过台架实验、CFD/风洞分析、主机背压安全验证和船级社规范校核进一步确认。</div>
+  </section>
+
+  <!-- CII 对比 -->
+  <section class="section" id="cii">
+    <div class="section-header reveal">
+      <h2>IMO 合规与 CII 评级分析</h2>
+      <p>基于中东—东亚航线的仿真对比</p>
+    </div>
+    <div class="cii-layout">
+      <div class="cii-compare reveal reveal-d1">
+        <table>
+          <thead><tr><th>对比项</th><th>传统滚筒帆</th><th>海帆智擎</th><th>提升</th></tr></thead>
+          <tbody>
+            <tr><td>驱动方式</td><td>独立电机</td><td>废气余能透平</td><td>外部供能 −62%</td></tr>
+            <tr><td>控制策略</td><td>固定转速</td><td>评分模型动态推荐</td><td>推力 +34%</td></tr>
+            <tr><td>安全保护</td><td>基础限位</td><td>多层规则引擎</td><td>独立安全链路</td></tr>
+            <tr><td>CII 改善</td><td>≤ 0.2 级</td><td>0.5–0.8 级</td><td>显著提升</td></tr>
+            <tr><td>碳排放数据</td><td>手动估算</td><td>航次碳账本</td><td>可审计追溯</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cii-rating reveal reveal-d2">
+        <div class="cii-card">
+          <div class="cii-label">Baseline — 不开启系统</div>
+          <div class="cii-grade grade-c">C</div>
+          <div class="cii-desc">燃油消耗较高，年度 CII 改善压力较大，存在降级至 D 的风险。</div>
+          <div class="cii-bar"><span class="ci-a"></span><span class="ci-b"></span><span class="ci-c"></span><span></span><span></span></div>
+        </div>
+        <div class="cii-card">
+          <div class="cii-label">With Haifan — 开启海帆智擎</div>
+          <div class="cii-grade grade-b">B</div>
+          <div class="cii-desc">废气余能驱动 + 多装置协同 + 轻量评分·安全规则校核，年减排 CO₂ 约 6,540 吨，CII 具备升至 B/A 级潜力。该结果为样本航线估算，需待实船验证。</div>
+          <div class="cii-bar"><span class="ci-a"></span><span class="ci-b"></span><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 关键指标 -->
+  <section class="section">
+    <div class="section-header reveal">
+      <h2>关键技术指标</h2>
+      <p>基于 1–20 万 DWT 远洋船舶的样本工况估算（待验证）</p>
+    </div>
+    <div class="kpi-strip reveal">
+      <div class="kpi"><div class="kpi-val">10–30<span style="font-size:0.5em">%</span></div><div class="kpi-lbl">节能潜力区间</div><div class="kpi-lbl"><span class="source-badge">样本航线估算</span></div></div>
+      <div class="kpi"><div class="kpi-val">1.5–3.5<span style="font-size:0.5em"> MW</span></div><div class="kpi-lbl">等效助航功率</div><div class="kpi-lbl"><span class="source-badge">按推力/船速估算</span></div></div>
+      <div class="kpi"><div class="kpi-val">3–25<span style="font-size:0.5em"> m/s</span></div><div class="kpi-lbl">有效风速范围</div><div class="kpi-lbl"><span class="source-badge">设计边界</span></div></div>
+      <div class="kpi"><div class="kpi-val">&gt; 95<span style="font-size:0.5em">%</span></div><div class="kpi-lbl">系统可用率</div><div class="kpi-lbl"><span class="source-badge">演示目标值</span></div></div>
+      <div class="kpi"><div class="kpi-val">1–6<span style="font-size:0.5em"> 座</span></div><div class="kpi-lbl">可配置滚筒帆数</div><div class="kpi-lbl"><span class="source-badge">方案配置</span></div></div>
+      <div class="kpi"><div class="kpi-val">&lt; 60<span style="font-size:0.5em"> s</span></div><div class="kpi-lbl">策略响应时间</div><div class="kpi-lbl"><span class="source-badge">原型目标</span></div></div>
+      <div class="kpi"><div class="kpi-val">3,000–10,000<span style="font-size:0.5em"> t</span></div><div class="kpi-lbl">年减排 CO₂ 潜力</div><div class="kpi-lbl"><span class="source-badge">样本航线估算</span></div></div>
+      <div class="kpi"><div class="kpi-val">+0.8<span style="font-size:0.5em"> 级</span></div><div class="kpi-lbl">CII 评级提升</div><div class="kpi-lbl"><span class="source-badge">非官方核算</span></div></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="foot-inner">
+      <p>海帆智擎 · 面向绿色智慧航运的废气余能驱动型智能滚筒帆系统</p>
+      <nav style="display:flex;gap:20px;flex-wrap:wrap;">
+        <a href="index.html">统一入口</a>
+        <a href="dashboard.html">驾驶舱</a>
+        <a href="visualizer.html">可视化</a>
+      </nav>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ── IntersectionObserver: Scroll-triggered Reveals ── */
+(function() {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  /* ── Parallax Tilt for Evidence Cards ── */
+  document.querySelectorAll('.evidence-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = 'perspective(800px) rotateY(' + (x * 4) + 'deg) rotateX(' + (-y * 4) + 'deg)';
+    });
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg)';
+    });
+  });
+})();
+</script>
+</body>
+</html>

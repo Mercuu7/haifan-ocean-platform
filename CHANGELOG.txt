@@ -1,0 +1,7 @@
+Haifan v7 consistency update
+
+- Rename evidence title to 装置结构与传动链路证据区.
+- Replace risky wording such as 实物/实测/测试表明/已接入 with sample, replay, reserved-interface, and pending-validation wording.
+- Use Streamlit formula defaults across pages: wind 12.6 m/s, wind direction 128°, heading 45°, speed 14.2 kn, engine load 72%, sea state 2, rpm 144, thrust about 519 kN, energy-saving potential about 18.3%.
+- Replace README links with README.txt and Streamlit launcher with RUN_STREAMLIT.bat.
+- Add dashboard recommendation reasons and improve visualizer default wind direction.

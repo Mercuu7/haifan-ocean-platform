@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能驾驶舱 · 海帆智擎</title>
+<meta name="description" content="海帆智擎智能驾驶舱——船端/岸基运行态势监控：推荐转速、协同推力、节能收益、CII改善与航线模拟进度。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   海帆智擎 · 驾驶舱设计系统 v8
+   基准: DESIGN_VARIANCE=8  MOTION_INTENSITY=6  VISUAL_DENSITY=4
+   船舶驾驶台日间监控风格
+   ============================================================ */
+:root {
+  --bg:        #e2e8f0;
+  --surface:   #ffffff;
+  --surface2:  #f7f9fb;
+  --text:      #0f172a;
+  --text-mid:  #334155;
+  --muted:     #475569;
+  --faint:     #64748b;
+  --accent:    #155e75;
+  --accent-hv: #0e4255;
+  --accent-lt: #ecfeff;
+  --accent-pale:#f0f9fb;
+  --border:    #c2cdd8;
+  --border-lt: #dde3ea;
+  --data-up:   #0d9488;
+  --data-warn: #a16207;
+  --data-down: #b91c1c;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15,23,42,0.05);
+  --shadow-lg: 0 20px 30px -12px rgba(15,23,42,0.05);
+  --radius-sm: 5px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Geist", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.55;
+  height: 100dvh; overflow: hidden; font-size: 14px;
+  font-weight: 450;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+/* ── Clean background, no grid ── */
+body::before { display: none; }
+
+/* ── App Layout ── */
+.app {
+  position: relative; z-index: 1;
+  height: 100dvh; display: grid;
+  grid-template-columns: 60px 1fr 312px;
+  grid-template-rows: 50px 1fr;
+  gap: 12px; padding: 12px;
+}
+
+/* ── Topbar — Liquid Glass ── */
+.topbar {
+  grid-column: 1/4;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(194,205,216,0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+  border-radius: 14px;
+}
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; letter-spacing: -0.01em; color: var(--text); }
+.brand svg { width: 20px; height: 20px; color: var(--accent); }
+.topbar nav { display: flex; gap: 2px; }
+.topbar nav a {
+  text-decoration: none; color: var(--muted); font-size: 11px; font-weight: 600;
+  padding: 5px 12px; border-radius: var(--radius-sm);
+  transition: all 0.2s var(--ease-out);
+}
+.topbar nav a:hover, .topbar nav a.on { color: var(--text); background: var(--accent-lt); }
+.status-pills { display: flex; gap: 8px; align-items: center; }
+.pill {
+  font-size: 11px; font-weight: 600; padding: 4px 10px;
+  border-radius: 999px; background: var(--surface2); color: var(--muted);
+  border: 1px solid var(--border-lt);
+  display: flex; align-items: center; gap: 6px;
+}
+.live-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--data-up);
+  animation: statusPulse 2.4s var(--ease-out) infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.45); }
+  50% { box-shadow: 0 0 0 7px rgba(13,148,136,0); }
+}
+#clock { font-variant-numeric: tabular-nums; font-family: "Geist Mono", monospace; }
+
+/* ── Sidebar ── */
+.side {
+  grid-row: 2; display: flex; flex-direction: column; gap: 3px;
+  padding: 2px 0;
+}
+.side a, .side button {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; height: 52px; border: 1px solid transparent; border-radius: var(--radius-md);
+  background: transparent; color: var(--muted); text-decoration: none;
+  font-size: 9px; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: all 0.2s var(--ease-out);
+}
+.side a svg, .side button svg { width: 18px; height: 18px; }
+.side a:hover, .side button:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
+.side a.on { background: var(--accent-lt); border-color: rgba(21,94,117,0.2); color: var(--accent); }
+
+/* ── Main Area ── */
+.main {
+  grid-column: 2; grid-row: 2;
+  display: grid; grid-template-rows: 112px 1fr 190px; gap: 12px; min-width: 0;
+}
+
+/* ── KPI Row ── */
+.kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border-lt);
+  border-radius: 24px; padding: 16px 14px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 6px; box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+  transition: all 0.4s var(--ease-out);
+}
+.kpi-card:hover { box-shadow: 0 8px 24px rgba(15,23,42,0.08); transform: translateY(-2px); }
+.kpi-card .kpi-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--faint);
+  text-transform: uppercase; display: flex; align-items: center; gap: 6px;
+  width: 100%; justify-content: center;
+}
+.kpi-card .kpi-value {
+  font-size: 1.65rem; font-weight: 900; color: var(--text);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.025em;
+  font-family: "Geist Mono", "Cascadia Code", monospace;
+  transition: color 0.3s var(--ease-out);
+}
+.kpi-card .kpi-sub { font-size: 11px; color: var(--muted); text-align: center; }
+.kpi-card .kpi-value.green { color: var(--data-up); }
+.kpi-card .kpi-value.warn  { color: var(--data-warn); }
+
+.source-tag {
+  display: inline-block; margin-top: 2px; padding: 2px 8px;
+  border-radius: 999px; background: var(--accent-lt);
+  color: var(--accent); font-size: 10px; font-weight: 700;
+}
+
+/* ── Content Grid ── */
+.content { display: grid; grid-template-columns: 290px 1fr 290px; gap: 12px; min-height: 0; }
+.panel {
+  background: var(--surface); border: 1px solid var(--border-lt);
+  border-radius: 24px; padding: 20px; overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.03);
+}
+.panel-hdr {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--faint);
+  text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.panel-hdr::before { content: ""; width: 3px; height: 12px; border-radius: 2px; background: var(--accent); }
+.stack { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+
+/* ── Compass ── */
+.compass-row { display: grid; grid-template-columns: 90px 1fr; gap: 14px; align-items: center; }
+.compass-ring {
+  width: 90px; height: 90px; border-radius: 50%;
+  border: 2px solid var(--border); position: relative;
+  background: radial-gradient(circle, var(--surface2), var(--surface));
+}
+.compass-ring::before {
+  content: "N"; position: absolute; top: 4px; left: 50%;
+  transform: translateX(-50%); font-size: 9px; font-weight: 800; color: var(--faint);
+}
+.needle {
+  position: absolute; left: 50%; bottom: 50%; width: 2.5px; height: 34px;
+  background: var(--accent); border-radius: 3px;
+  transform-origin: bottom center; transform: rotate(135deg);
+  transition: transform 0.4s var(--ease-out);
+}
+.needle::after {
+  content: ""; position: absolute; top: -5px; left: -6px;
+  border-left: 7px solid transparent; border-right: 7px solid transparent;
+  border-bottom: 11px solid var(--accent);
+}
+.wind-num { font-size: 1.8rem; font-weight: 900; color: var(--text); letter-spacing: -0.03em; font-family: "Geist Mono", monospace; }
+.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mini {
+  background: var(--surface2); border: 1px solid var(--border-lt);
+  border-radius: var(--radius-sm); padding: 8px 10px;
+}
+.mini .ml { font-size: 10px; color: var(--faint); }
+.mini .mv { font-size: 1.1rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; font-family: "Geist Mono", monospace; }
+
+/* ── Gauge ── */
+.gauge-wrap { flex: 1; display: grid; place-items: center; position: relative; }
+.gauge {
+  width: 220px; height: 220px; border-radius: 50%; position: relative;
+  background: conic-gradient(from 225deg, var(--accent) 0 235deg, var(--border-lt) 235deg 315deg, transparent 315deg);
+  display: grid; place-items: center;
+}
+.gauge::after {
+  content: ""; position: absolute; inset: 13px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border-lt);
+}
+.gauge-inner { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.gauge-inner small { display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.07em; color: var(--faint); text-transform: uppercase; }
+.gauge-inner b { font-size: 2.6rem; font-weight: 900; color: var(--text); line-height: 1; letter-spacing: -0.04em; font-family: "Geist Mono", monospace; }
+.gauge-mode {
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-top: 8px; padding: 5px 14px;
+  border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+  background: var(--accent-lt); color: var(--accent);
+  border: 1px solid var(--border);
+  transition: all 0.3s var(--ease-out);
+}
+
+/* ── Progress Bars ── */
+.bar-row { margin: 8px 0; }
+.bar-row .bar-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: var(--muted); }
+.bar-track { height: 6px; background: var(--border-lt); border-radius: 3px; overflow: hidden; }
+.bar-fill {
+  height: 100%; border-radius: 3px; background: var(--accent);
+  transition: width 0.5s var(--ease-out);
+}
+.chart-canvas { width: 100%; height: 90px; display: block; border-radius: var(--radius-sm); }
+
+/* ── AI Note ── */
+.ai-note { display: grid; grid-template-columns: 48px 1fr; gap: 12px; align-items: center; }
+.ai-badge {
+  width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent-lt); color: var(--accent);
+  font-weight: 900; font-size: 16px; border: 2px solid var(--border);
+}
+.ai-note p { font-size: 12px; color: var(--text-mid); line-height: 1.65; }
+
+/* ── Bottom ── */
+.bottom { display: grid; grid-template-columns: 1.05fr 1.25fr 0.9fr; gap: 12px; }
+.route-canvas { width: 100%; height: 110px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border-lt); }
+.route-tip { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.log-list { font-size: 11px; }
+.log-list .log-row { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border-lt); align-items: center; }
+.log-row .log-tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 999px; background: var(--accent-lt); color: var(--accent);
+}
+.log-row .log-tag.warn { background: #fef9c3; color: var(--data-warn); }
+
+/* ── Right Panel ── */
+.right {
+  grid-column: 3; grid-row: 2;
+  background: var(--surface); border: 1px solid var(--border-lt);
+  border-radius: 24px; padding: 18px;
+  display: flex; flex-direction: column; gap: 14px; overflow: auto;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.03);
+}
+.ctrl-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.mode-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 6px; }
+.mode-btns button {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--muted);
+  padding: 8px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;
+  transition: all 0.2s var(--ease-out);
+}
+.mode-btns button:hover { background: var(--accent-lt); color: var(--text); }
+.mode-btns button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.mode-btns button:active { transform: scale(0.96); }
+
+.reason-box {
+  background: var(--accent-pale); border: 1px solid var(--border-lt);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  font-size: 11px; line-height: 1.7; color: var(--muted); margin: 6px 0;
+}
+.reason-box b { color: var(--text); display: block; margin-bottom: 4px; font-size: 12px; }
+.reason-box li { margin: 3px 0; margin-left: 16px; font-size: 10px; }
+
+.linkage-box {
+  background: var(--accent-pale); border: 1px solid var(--border-lt);
+  border-radius: var(--radius-sm); padding: 9px 11px;
+  font-size: 10px; line-height: 1.65; color: var(--muted); margin: 4px 0;
+}
+.linkage-box b { color: var(--text); }
+
+.slider-row { margin: 8px 0; }
+.slider-row label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+.slider-row input { width: 100%; accent-color: var(--accent); cursor: pointer; }
+
+.btn {
+  display: block; width: 100%; padding: 8px; border-radius: var(--radius-sm);
+  border: 1px solid var(--accent); background: var(--accent); color: #fff;
+  font-weight: 700; font-size: 11px; cursor: pointer; font-family: inherit;
+  transition: all 0.2s var(--ease-out); text-align: center; margin-bottom: 5px;
+}
+.btn:hover { background: var(--accent-hv); }
+.btn:active { transform: scale(0.97); }
+.btn.ghost { background: var(--surface); color: var(--muted); border-color: var(--border); }
+.btn.ghost:hover { background: var(--surface2); color: var(--text); }
+
+.device-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; text-align: center; }
+.device-grid div {
+  border: 1px solid var(--border-lt); border-radius: var(--radius-sm);
+  padding: 9px 5px; background: var(--surface2);
+}
+.device-grid b { display: block; font-size: 1.25rem; font-weight: 800; color: var(--text); font-family: "Geist Mono", monospace; }
+.device-grid small { font-size: 10px; color: var(--faint); }
+
+.help-text { font-size: 10px; color: var(--faint); line-height: 1.7; margin-top: 4px; }
+
+/* ── Number jump animation ── */
+@keyframes numberPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+.num-pop { animation: numberPop 0.35s var(--ease-out); }
+
+/* ── Bento Micro-Interactions ── */
+/* Shimmer on energy KPI card */
+@keyframes kpiShimmer {
+  0% { box-shadow: var(--shadow-sm), 0 0 0 0 rgba(13,148,136,0); }
+  50% { box-shadow: var(--shadow-sm), 0 0 0 6px rgba(13,148,136,0.10); }
+  100% { box-shadow: var(--shadow-sm), 0 0 0 0 rgba(13,148,136,0); }
+}
+.kpi-card.energy-shimmer { animation: kpiShimmer 3.5s var(--ease-out) infinite; }
+
+/* Breathing gauge ring */
+@keyframes gaugeBreathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(21,94,117,0); }
+  50% { box-shadow: 0 0 0 12px rgba(21,94,117,0.08), 0 0 30px rgba(21,94,117,0.06); }
+}
+.gauge { animation: gaugeBreathe 4s var(--ease-out) infinite; }
+
+/* Event log auto-sort transition */
+.log-list .log-row { transition: all 0.45s var(--ease-out); }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .app { grid-template-columns: 48px 1fr; }
+  .right { display: none; }
+  .topbar { grid-column: 1/3; }
+  .main { grid-column: 2; }
+  .content { grid-template-columns: 1fr; }
+  .bottom { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+      海帆智擎 · 智能驾驶舱
+    </div>
+    <nav>
+      <a href="index.html">入口</a>
+      <a href="showcase.html">展示页</a>
+      <a class="on" href="dashboard.html">驾驶舱</a>
+      <a href="visualizer.html">可视化</a>
+    </nav>
+    <div class="status-pills">
+      <span class="pill"><span class="live-dot"></span>系统正常</span>
+      <span class="pill" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <aside class="side">
+    <a href="dashboard.html" class="on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>驾驶舱</span>
+    </a>
+    <a href="visualizer.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18L9 12l4 4 8-8"/><circle cx="9" cy="12" r="1.5"/><circle cx="13" cy="16" r="1.5"/><circle cx="19" cy="8" r="1.5"/></svg>
+      <span>可视化</span>
+    </a>
+    <a href="showcase.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>展示页</span>
+    </a>
+    <button onclick="toast('航行总览——后续接入 AIS 与航线数据')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 00-8 8c0 5.4 8 13 8 13s8-7.6 8-13a8 8 0 00-8-8z"/></svg>
+      <span>航行</span>
+    </button>
+    <button onclick="toast('能效管理——Streamlit 平台已扩展 CII 评级仿真')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M12 6v6l4 2"/></svg>
+      <span>能效</span>
+    </button>
+    <button onclick="toast('设备监控——当前展示 28 台设备状态总览')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span>设备</span>
+    </button>
+    <button onclick="toast('告警——预留事件日志')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>告警</span>
+    </button>
+  </aside>
+
+  <main class="main">
+    <section class="kpis">
+      <div class="kpi-card"><div class="kpi-label">推力估算 <span>MODEL</span></div><div class="kpi-value"><span id="kThrust">519</span> kN</div><div class="kpi-sub"><span class="source-tag">演示工况 · 简化模型计算</span></div></div>
+      <div class="kpi-card"><div class="kpi-label">推荐转速 <span>RPM</span></div><div class="kpi-value"><span id="kRpm">144</span> rpm</div><div class="kpi-sub"><span class="source-tag">规则推荐区间</span></div></div>
+      <div class="kpi-card"><div class="kpi-label">进气阀开度 <span>INLET</span></div><div class="kpi-value"><span id="kInlet">77</span>%</div><div class="kpi-sub"><span class="source-tag">演示控制量</span></div></div>
+      <div class="kpi-card"><div class="kpi-label">旁通阀开度 <span>BYPASS</span></div><div class="kpi-value"><span id="kBypass">23</span>%</div><div class="kpi-sub"><span class="source-tag">演示控制量</span></div></div>
+      <div class="kpi-card energy-shimmer"><div class="kpi-label">预估节能 <span>CII</span></div><div class="kpi-value green"><span id="kSave">18.3</span>%</div><div class="kpi-sub"><span class="source-tag">样本航线估算</span></div></div>
+      <div class="kpi-card"><div class="kpi-label">安全状态 <span>SAFE</span></div><div class="kpi-value green" id="kSafe" style="font-size:1.1rem;">安全运行</div><div class="kpi-sub"><span class="source-tag">待实船验证</span></div></div>
+    </section>
+
+    <section class="content">
+      <div class="stack">
+        <div class="panel">
+          <div class="panel-hdr">环境与航行</div>
+          <div class="compass-row">
+            <div class="compass-ring"><div class="needle" id="windArrow"></div></div>
+            <div>
+              <div class="wind-num"><span id="windDeg">128</span>°</div>
+              <div style="font-size:10px;color:var(--muted);margin:2px 0 8px;">当前风向 / 侧风分量</div>
+              <div class="mini-grid">
+                <div class="mini"><div class="ml">真实风速</div><div class="mv" id="mWind">12.6</div></div>
+                <div class="mini"><div class="ml">相对风速</div><div class="mv" id="mRelWind">11.3</div></div>
+                <div class="mini"><div class="ml">船速</div><div class="mv" id="mSpeed">14.2</div></div>
+                <div class="mini"><div class="ml">航程</div><div class="mv">852.6</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr">智能推荐说明</div>
+          <div class="ai-note">
+            <div class="ai-badge">评</div>
+            <p id="aiText">当前风向 128°、航向 45°，侧风分量较高；背压 3.2 kPa、海况 2 级，未触发保护规则，建议保持助航运行。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="align-items:center;justify-content:center;">
+        <div class="panel-hdr" style="position:absolute;top:14px;left:14px;">核心助航推力</div>
+        <div class="gauge">
+          <div class="gauge-inner">
+            <small>推力估算 / kN<br><span class="source-tag">简化模型计算</span></small>
+            <b id="gaugeValue">519</b>
+            <div class="gauge-mode" id="modeBadge">智能优化模式</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <div class="panel-hdr">主机与排气系统</div>
+          <div class="bar-row"><div class="bar-label"><span>主机负荷</span><b id="engineText">72%</b></div><div class="bar-track"><div class="bar-fill" id="engineFill" style="width:72%"></div></div></div>
+          <div class="bar-row"><div class="bar-label"><span>排气背压</span><b id="backText">3.2 kPa</b></div><canvas class="chart-canvas" id="engineChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr">海况信息</div>
+          <div class="mini-grid">
+            <div class="mini"><div class="ml">显著波高</div><div class="mv" id="waveH">1.6 m</div></div>
+            <div class="mini"><div class="ml">平均周期</div><div class="mv">6.2 s</div></div>
+            <div class="mini"><div class="ml">海况等级</div><div class="mv" id="seaTxt">2 级</div></div>
+            <div class="mini"><div class="ml">可用率</div><div class="mv" style="color:var(--data-up)">97%</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bottom">
+      <div class="panel">
+        <div class="panel-hdr">航线地图</div>
+        <canvas class="route-canvas" id="routeCanvas"></canvas>
+        <div class="route-tip" id="routeTip">中东 → 东亚：已进入侧风富集区，建议开启高效助航。</div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr">推力与节能趋势</div>
+        <canvas class="chart-canvas" id="trendChart" style="height:118px"></canvas>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr">事件日志</div>
+        <div class="log-list">
+          <div class="log-row"><span>10:24:12</span><span class="log-tag">信息</span><span>评分模型策略已更新</span></div>
+          <div class="log-row"><span>10:18:45</span><span class="log-tag">设备</span><span>转速已调整至推荐值</span></div>
+          <div class="log-row"><span>10:05:33</span><span class="log-tag warn">告警</span><span>阵风较大，已自动修正</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="right">
+    <div>
+      <div class="ctrl-title">参数控制</div>
+      <div class="mode-btns">
+        <button class="on" onclick="setControlMode('ai',this)">智能优化</button>
+        <button onclick="setControlMode('manual',this)">手动控制</button>
+        <button onclick="setControlMode('fixed',this)">固定转速</button>
+        <button onclick="setControlMode('off',this)">停用</button>
+      </div>
+
+      <div class="reason-box">
+        <b>推荐原因</b>
+        <ul>
+          <li>当前风向 128°、航向 045°，侧风分量较高。</li>
+          <li>排气背压 3.2 kPa，未触发主机保护规则。</li>
+          <li>海况 2 级，满足助航运行条件。</li>
+        </ul>
+      </div>
+      <div class="linkage-box">
+        <b>参数联动：</b>转速、阀门开度与节能目标调整后，推力仪表、KPI、主机状态、趋势图与事件日志同步响应；可视化页面中，风速联动旋筒帆转速、推力矢量与废气粒子速度。
+      </div>
+      <div class="slider-row"><label>推荐转速 <b id="sRpmText">144 rpm</b></label><input id="sRpm" type="range" min="30" max="220" value="144" oninput="update()"></div>
+      <div class="slider-row"><label>进气阀开度 <b id="sInletText">77%</b></label><input id="sInlet" type="range" min="0" max="100" value="77" oninput="update()"></div>
+      <div class="slider-row"><label>旁通阀开度 <b id="sBypassText">23%</b></label><input id="sBypass" type="range" min="0" max="100" value="23" oninput="update()"></div>
+      <div class="slider-row"><label>目标节能 <b id="sSaveText">18.3%</b></label><input id="sSave" type="range" min="0" max="35" step="0.1" value="18.3" oninput="update()"></div>
+      <button class="btn" onclick="update();toast('参数已应用')">应用到系统</button>
+      <button class="btn ghost" onclick="resetDemo()">恢复推荐值</button>
+    </div>
+    <div class="panel" style="margin-top:4px;">
+      <div class="panel-hdr">设备状态总览</div>
+      <div class="device-grid">
+        <div><b>28</b><small>总数</small></div>
+        <div><b style="color:var(--data-up)">25</b><small>正常</small></div>
+        <div><b style="color:var(--data-warn)">2</b><small>告警</small></div>
+        <div><b style="color:var(--data-down)">1</b><small>故障</small></div>
+      </div>
+    </div>
+    <p class="help-text">导航、参数、地图与图表均已绑定交互。轻量评分模型平台在 Streamlit 中运行：<br><code style="background:var(--surface2);padding:1px 6px;border-radius:3px;font-size:10px;">streamlit run streamlit_app.py</code></p>
+  </aside>
+</div>
+
+<script>
+let controlMode='ai';
+const $=id=>document.getElementById(id);
+
+function clock(){
+  const d=new Date();
+  $('clock').textContent=d.toLocaleString('zh-CN',{hour12:false});
+}
+setInterval(clock,1000);clock();
+
+function toast(msg){
+  let t=document.getElementById('liveToast');
+  if(!t){
+    t=document.createElement('div');t.id='liveToast';
+    t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:999px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;font-family:"Geist","PingFang SC",sans-serif;';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(8px)';},2000);
+}
+
+function setControlMode(m,btn){
+  controlMode=m;
+  document.querySelectorAll('.mode-btns button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  update();
+}
+
+function resetDemo(){
+  ['sRpm','sInlet','sBypass','sSave'].forEach((id,i)=>{$(id).value=[144,77,23,18.3][i];});
+  update();toast('已恢复 AI 推荐值');
+}
+
+/* ── Micro: number pop animation ── */
+function popEl(el) {
+  el.classList.remove('num-pop');
+  void el.offsetWidth;
+  el.classList.add('num-pop');
+}
+
+function drawLine(c,points,color){
+  const ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight;
+  c.width=w*devicePixelRatio;c.height=h*devicePixelRatio;
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='#e9edf3';ctx.lineWidth=1;
+  for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(0,h*i/4);ctx.lineTo(w,h*i/4);ctx.stroke();}
+  ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+  points.forEach((p,i)=>{const x=i/(points.length-1)*w,y=h-p*h;if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);});
+  ctx.stroke();
+  points.forEach((p,i)=>{const x=i/(points.length-1)*w,y=h-p*h;ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();});
+}
+
+function drawRoute(){
+  const c=$('routeCanvas'),ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight;
+  c.width=w*devicePixelRatio;c.height=h*devicePixelRatio;
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='#e9edf3';
+  for(let x=0;x<w;x+=28){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=28){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  ctx.strokeStyle='#155e75';ctx.setLineDash([7,6]);ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(22,h-26);
+  ctx.bezierCurveTo(w*.32,h*.66,w*.48,h*.14,w-32,28);
+  ctx.stroke();ctx.setLineDash([]);
+  [['中东',22,h-26,'#155e75'],['当前位置',w*.52,h*.40,'#0d9488'],['东亚',w-32,28,'#a16207']].forEach(p=>{
+    ctx.fillStyle=p[3];ctx.beginPath();ctx.arc(p[1],p[2],5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0f172a';ctx.font='bold 10px "Geist","PingFang SC",sans-serif';
+    ctx.fillText(p[0],p[1]+8,p[2]-7);
+  });
+  ctx.fillStyle='rgba(21,94,117,.06)';ctx.fillRect(w*.42,14,w*.24,h-28);
+  ctx.fillStyle='#155e75';ctx.font='10px "Geist","PingFang SC",sans-serif';
+  ctx.fillText('侧风富集区',w*.45,30);
+}
+
+function update(){
+  const rpm=+$('sRpm').value,inlet=+$('sInlet').value,bypass=+$('sBypass').value,save=+$('sSave').value;
+  const thrust=Math.max(0,Math.round(519+(rpm-144)*2.1+(inlet-77)*3.0-(bypass-23)*1.2));
+  $('sRpmText').textContent=rpm+' rpm';
+  $('sInletText').textContent=inlet+'%';
+  $('sBypassText').textContent=bypass+'%';
+  $('sSaveText').textContent=save+'%';
+  $('kRpm').textContent=rpm;
+  $('kInlet').textContent=inlet;
+  $('kBypass').textContent=bypass;
+  $('kSave').textContent=(save).toFixed(1);
+  $('kThrust').textContent=thrust.toLocaleString();
+  $('gaugeValue').textContent=thrust.toLocaleString();
+  popEl($('gaugeValue'));
+  $('windDeg').textContent=(128+Math.round((rpm-144)/8)+360)%360;
+  $('mWind').textContent=(12.6+(save-18.3)/30).toFixed(1);
+  $('mRelWind').textContent=(18.0+(inlet-77)/110).toFixed(1);
+  $('mSpeed').textContent=(14.2+(save-18.3)/80).toFixed(1);
+  const engineLoad=Math.min(98,Math.max(40,Math.round(72+(inlet-77)*0.22)));
+  $('engineText').textContent=engineLoad+'%';
+  $('engineFill').style.width=engineLoad+'%';
+  $('backText').textContent=(3.2+(bypass-23)*0.015).toFixed(1)+' kPa';
+  $('windArrow').style.transform='rotate('+($('windDeg').textContent)+'deg)';
+  if(bypass>70||controlMode==='off'){
+    $('modeBadge').textContent='主机保护模式';$('modeBadge').style.color='#a16207';
+    $('kSafe').textContent='保护运行';$('kSafe').style.color='#a16207';
+  }else{
+    $('modeBadge').textContent='智能优化模式';$('modeBadge').style.color='#155e75';
+    $('kSafe').textContent='安全运行';$('kSafe').style.color='#0d9488';
+  }
+  $('aiText').textContent=`当前风向 128°、航向 045°，侧风分量较高；排气背压 ${($('backText').textContent)}，未触发保护规则；海况 2 级，轻量评分模型建议转速 ${rpm} rpm、入口阀 ${inlet}%、旁通阀 ${bypass}%，推力估算约 ${thrust.toLocaleString()} kN，目标节能约 ${save}%（样本航线估算）。`;
+  const pts=Array.from({length:24},(_,i)=>.25+.45*Math.sin(i/2+rpm/80)**2+.18*Math.random());
+  drawLine($('trendChart'),pts,'#155e75');
+  const pts2=Array.from({length:40},(_,i)=>.4+.18*Math.sin(i/3)+.08*Math.random());
+  drawLine($('engineChart'),pts2,'#0d9488');
+  drawRoute();
+}
+
+window.addEventListener('resize',update);
+update();
+
+/* ── Magnetic Compass Needle ── */
+(function() {
+  var ring = document.querySelector('.compass-ring');
+  if (!ring) return;
+  ring.addEventListener('mousemove', function(e) {
+    var rect = ring.getBoundingClientRect();
+    var cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    var angle = Math.atan2(e.clientY - cy, e.clientX - cx) * (180/Math.PI);
+    // Subtle offset: max 5 degrees pull toward cursor
+    var baseAngle = parseInt($('windDeg').textContent) || 135;
+    var offset = (angle - baseAngle) * 0.06;
+    var needle = ring.querySelector('.needle');
+    if (needle) needle.style.transform = 'rotate(' + (baseAngle + offset) + 'deg)';
+  });
+  ring.addEventListener('mouseleave', function() {
+    var needle = ring.querySelector('.needle');
+    var baseAngle = parseInt($('windDeg').textContent) || 135;
+    if (needle) needle.style.transform = 'rotate(' + baseAngle + 'deg)';
+  });
+})();
+
+/* ── Event Log Auto-Sort ── */
+(function() {
+  var logList = document.querySelector('.log-list');
+  if (!logList) return;
+  setInterval(function() {
+    var rows = Array.from(logList.querySelectorAll('.log-row'));
+    if (rows.length < 2) return;
+    // Rotate: move top row to bottom
+    var first = rows[0];
+    logList.appendChild(first);
+  }, 5000);
+})();
+</script>
+</body>
+</html>

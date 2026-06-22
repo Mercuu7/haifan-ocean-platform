@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>机理可视化 · 海帆智擎</title>
+<meta name="description" content="海帆智擎船舶交互可视化——实时展现滚筒帆、风向、废气能量流与马格努斯推力的核心机理。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   海帆智擎 · 可视化设计系统 v8
+   基准: DESIGN_VARIANCE=8  MOTION_INTENSITY=6  VISUAL_DENSITY=4
+   极简 UI，Canvas 为主角
+   ============================================================ */
+:root {
+  --bg:        #e2e8f0;
+  --surface:   #ffffff;
+  --surface2:  #f7f9fb;
+  --text:      #0f172a;
+  --muted:     #64748b;
+  --faint:     #94a3b8;
+  --accent:    #155e75;
+  --accent-lt: #ecfeff;
+  --border:    #c2cdd8;
+  --border-lt: #dde3ea;
+  --data-up:   #0d9488;
+  --data-warn: #a16207;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 14px -4px rgba(15,23,42,0.06);
+  --radius-sm: 5px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Geist", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100dvh; overflow: hidden; font-size: 14px;
+  font-weight: 450;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+/* ── Canvas fullscreen ── */
+canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
+
+/* ── Topbar — Liquid Glass ── */
+.top {
+  position: absolute; top: 0; left: 0; right: 0; height: 46px; z-index: 10;
+  background: rgba(255,255,255,0.84);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid rgba(194,205,216,0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px;
+}
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; letter-spacing: -0.01em; }
+.brand svg { width: 20px; height: 20px; color: var(--accent); }
+.navlinks { display: flex; gap: 2px; }
+.navlinks a {
+  text-decoration: none; color: var(--muted); font-size: 11px; font-weight: 600;
+  padding: 5px 12px; border-radius: var(--radius-sm);
+  transition: all 0.2s var(--ease-out);
+}
+.navlinks a:hover, .navlinks a.on { color: var(--text); background: var(--accent-lt); }
+
+.chips { display: flex; gap: 7px; }
+.chip {
+  font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+  background: var(--surface2); color: var(--muted);
+  border: 1px solid var(--border-lt);
+  display: flex; align-items: center; gap: 5px;
+}
+.chip b { color: var(--accent); font-family: "Geist Mono", monospace; }
+.chip.ok b { color: var(--data-up); }
+.live-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--data-up);
+  animation: statusPulse 2.4s var(--ease-out) infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.45); }
+  50% { box-shadow: 0 0 0 7px rgba(13,148,136,0); }
+}
+
+/* ── Panels ── */
+.panel {
+  position: absolute; z-index: 10;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(221,227,234,0.65);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: 0 2px 14px rgba(15,23,42,0.04), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.panel-hdr {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--faint);
+  text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.panel-hdr::before { content: ""; width: 3px; height: 11px; border-radius: 2px; background: var(--accent); }
+
+/* ── Positions ── */
+.left   { left: 12px; top: 58px; width: 360px; }
+.right  { right: 12px; top: 58px; width: 380px; }
+.bottom { left: 50%; bottom: 12px; transform: translateX(-50%); padding: 12px 24px; display: flex; gap: 22px; }
+.mini-map { left: 12px; bottom: 12px; width: 360px; height: 155px; }
+
+/* ── Controls ── */
+.ctrl { margin: 7px 0; }
+.ctrl label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+.ctrl label b { font-family: "Geist Mono", monospace; }
+.ctrl input { width: 100%; accent-color: var(--accent); cursor: pointer; }
+
+.mode-btns { display: grid; grid-template-columns: repeat(2,1fr); gap: 4px; }
+.btn {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--muted);
+  padding: 8px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;
+  transition: all 0.2s var(--ease-out);
+}
+.btn:hover { background: var(--accent-lt); color: var(--text); }
+.btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn:active { transform: scale(0.96); }
+
+.play { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.play button {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); font-size: 12px; cursor: pointer;
+  transition: all 0.2s var(--ease-out); display: grid; place-items: center;
+}
+.play button:hover { background: var(--accent-lt); }
+
+/* ── Metrics ── */
+.metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+.metric {
+  background: var(--surface2); border: 1px solid var(--border-lt);
+  border-radius: var(--radius-sm); padding: 8px 9px;
+}
+.metric small { display: block; font-size: 10px; color: var(--faint); }
+.metric b { font-size: 1.2rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; font-family: "Geist Mono", monospace; }
+.metric em { display: block; margin-top: 2px; color: var(--faint); font-size: 10px; font-style: normal; }
+
+.ring {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: conic-gradient(var(--accent) 68%, var(--border-lt) 0);
+  display: grid; place-items: center; margin: auto;
+  transition: background 0.5s var(--ease-out);
+}
+.ring span {
+  width: 68px; height: 68px; border-radius: 50%; background: var(--surface);
+  display: grid; place-items: center; font-size: 18px; font-weight: 900; color: var(--text);
+  font-family: "Geist Mono", monospace;
+}
+
+.rotor-row { display: grid; grid-template-columns: 1fr 50px 52px; gap: 5px; align-items: center; font-size: 10px; margin: 4px 0; }
+.bar { height: 5px; background: var(--border-lt); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s var(--ease-out); }
+
+.alert-line { border-top: 1px solid var(--border-lt); padding-top: 8px; margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.6; }
+.linkage-note {
+  margin-top: 8px; background: rgba(236,254,255,0.5);
+  border: 1px solid var(--border-lt); border-radius: var(--radius-sm);
+  padding: 8px 10px; font-size: 11px; line-height: 1.65; color: var(--muted);
+}
+.linkage-note b { color: var(--text); }
+.warn { color: var(--data-warn); font-weight: 600; }
+
+/* ── Legend ── */
+.legend { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 2px; }
+.dwind { background: #3b82c4; border-radius: 50%; }
+.dthrust { background: #0d9488; }
+.dexhaust { background: #d97706; border-radius: 50%; }
+.drotor { background: var(--accent); border-radius: 50%; }
+
+/* ── Mini Map ── */
+.route-area {
+  position: absolute; inset: 32px 10px 10px 10px;
+  background: var(--surface2); border-radius: var(--radius-sm); border: 1px solid var(--border-lt);
+}
+.map-dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.m1 { left: 50px; top: 50px; }
+.m2 { left: 135px; top: 30px; background: var(--data-up); }
+.m3 { right: 36px; top: 12px; background: var(--data-warn); }
+
+.zoom { position: absolute; right: 5px; bottom: 5px; display: flex; flex-direction: column; gap: 2px; }
+.zoom button {
+  width: 24px; height: 24px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--muted); cursor: pointer; font-size: 11px;
+  transition: all 0.15s var(--ease-out);
+}
+.zoom button:hover { background: var(--accent-lt); }
+
+/* ── Status bar ── */
+.status-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 26px; z-index: 7;
+  background: rgba(255,255,255,0.82); border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: flex-end; gap: 18px;
+  padding: 0 14px; font-size: 11px; color: var(--faint);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1150px) {
+  .left, .right { width: 290px; }
+  .chips { display: none; }
+  .navlinks { display: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="main"></canvas>
+
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><circle cx="12" cy="12" r="3"/>
+    </svg>
+    海帆智擎 · 船舶交互可视化
+  </div>
+  <nav class="navlinks">
+    <a href="index.html">入口</a>
+    <a href="showcase.html">展示页</a>
+    <a href="dashboard.html">驾驶舱</a>
+    <a class="on" href="visualizer.html">可视化</a>
+  </nav>
+  <div class="chips">
+    <span class="chip">航速 <b id="hSpeed">14.2 kn</b></span>
+    <span class="chip">航向 <b id="hHead">045°</b></span>
+    <span class="chip">风速 <b id="hWind">12.6 m/s</b></span>
+    <span class="chip ok"><span class="live-dot"></span>系统 <b>正常</b></span>
+  </div>
+</header>
+
+<aside class="panel left">
+  <div class="panel-hdr">环境与控制</div>
+  <div class="ctrl"><label>风速 <b id="vWind">12.6 m/s</b></label><input id="wind" min="0" max="30" step=".1" value="12.6" type="range"></div>
+  <div class="ctrl"><label>风向 <b id="vDir">128°</b></label><input id="dir" min="0" max="359" step="1" value="128" type="range"></div>
+  <div class="ctrl"><label>航向 <b id="vHead">045°</b></label><input id="head" min="0" max="359" step="1" value="45" type="range"></div>
+  <div class="ctrl"><label>主机负荷 <b id="vEngine">72%</b></label><input id="engine" min="0" max="100" step="1" value="72" type="range"></div>
+  <div class="ctrl"><label>海况等级 <b id="vSea">2 级</b></label><input id="seaState" min="0" max="6" step="1" value="2" type="range"></div>
+
+  <div class="panel-hdr" style="margin-top:10px;">回放控制</div>
+  <div class="play">
+    <button id="playBtn" onclick="toggleAuto()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+    </button>
+    <button onclick="resetView()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.5 17.5A9 9 0 102 12"/></svg>
+    </button>
+    <button onclick="toast('已切换为跟随视角')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
+    </button>
+    <span style="font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;font-family:'Geist Mono',monospace;" id="playText">02:18:35 / 06:00:00</span>
+  </div>
+  <div class="mode-btns" style="margin-top:8px;">
+    <button class="btn on" onclick="setMode('auto',this)">智能自动</button>
+    <button class="btn" onclick="setMode('eff',this)">助航</button>
+    <button class="btn" onclick="setMode('safe',this)">保护</button>
+    <button class="btn" onclick="setMode('bad',this)">安全</button>
+  </div>
+</aside>
+
+<section class="panel mini-map">
+  <div class="panel-hdr">航线与位置</div>
+  <div class="route-area">
+    <span class="map-dot m1"></span><span class="map-dot m2"></span><span class="map-dot m3"></span>
+    <div class="zoom"><button>+</button><button>−</button></div>
+  </div>
+</section>
+
+<aside class="panel right">
+  <div class="panel-hdr">运行概览</div>
+  <div class="metric-grid">
+    <div class="metric"><small>当前模式</small><b id="modeText">智能风助航行</b></div>
+    <div class="ring"><span id="effRing">68%</span></div>
+    <div class="metric"><small>预计节能</small><b id="saveText">18.7%</b><em>样本工况估算</em></div>
+    <div class="metric"><small>累计节能</small><b>12.4 t</b><em>本地样本库回放</em></div>
+  </div>
+
+  <div class="panel-hdr" style="margin-top:10px;">旋筒帆贡献</div>
+  <div id="rotorList"></div>
+
+  <div class="panel-hdr" style="margin-top:10px;">能效与性能</div>
+  <div class="metric-grid">
+    <div class="metric"><small>风助推力</small><b id="sumThrust">519 kN</b><em>4座装置 · 简化模型计算</em></div>
+    <div class="metric"><small>等效助航功率</small><b id="eqSave">1,060 kW</b><em>按推力、船速与折减系数估算</em></div>
+    <div class="metric"><small>CO₂ 减排</small><b>4.2 t/h</b><em>样本航线估算</em></div>
+    <div class="metric"><small>能效比</small><b>68%</b><em>演示工况</em></div>
+  </div>
+
+  <div class="alert-line">
+    <p class="warn">前方海况可能升至 3 级</p>
+    <p>废气粒子展示"废能 → 滚筒"能量链路</p>
+    <div class="linkage-note">
+      <b>风速联动：</b>拖动左侧风速后，旋筒帆旋转速度、推力箭头长度、废气粒子速度、节能估算与运行模式同步变化。
+    </div>
+  </div>
+</aside>
+
+<div class="panel bottom" aria-label="图例">
+  <span class="legend"><i class="dot dwind"></i>风向</span>
+  <span class="legend"><i class="dot dthrust"></i>推力向量</span>
+  <span class="legend"><i class="dot dexhaust"></i>废气流动</span>
+  <span class="legend"><i class="dot drotor"></i>旋筒帆</span>
+</div>
+
+<div class="status-bar">系统就绪 &nbsp;|&nbsp; 数据正常 &nbsp;|&nbsp; Haifan v7.0</div>
+
+<script>
+const canvas=document.getElementById('main'),ctx=canvas.getContext('2d');
+let W,H,t=0,auto=true,forced='auto',particles=[];
+const $=id=>document.getElementById(id);
+
+function resize(){
+  W=canvas.width=innerWidth*devicePixelRatio;
+  H=canvas.height=innerHeight*devicePixelRatio;
+  canvas.style.width=innerWidth+'px';
+  canvas.style.height=innerHeight+'px';
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+resize();addEventListener('resize',resize);
+
+function toast(msg){
+  let t=document.getElementById('liveToast');
+  if(!t){
+    t=document.createElement('div');t.id='liveToast';
+    t.style.cssText='position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:999px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:all .25s;pointer-events:none;font-family:"Geist","PingFang SC",sans-serif;';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(8px)';},1600);
+}
+
+function toggleAuto(){
+  auto=!auto;
+  const btn=$('playBtn');
+  btn.innerHTML=auto
+    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
+}
+function resetView(){toast('视角已重置');}
+
+function setMode(m,btn){
+  forced=m;
+  document.querySelectorAll('.mode-btns .btn').forEach(x=>x.classList.remove('on'));
+  btn.classList.add('on');
+  toast('模式切换：'+btn.textContent);
+}
+
+function val(id){return +$(id).value;}
+function windPace(){return Math.max(0.25, Math.min(3.8, val('wind')/7.2));}
+function mode(){
+  if(forced!=='auto')return forced;
+  if(val('seaState')>=5||val('wind')>24)return 'bad';
+  if(val('engine')>88)return 'safe';
+  if(val('wind')<6)return 'low';
+  return 'eff';
+}
+function modeName(m){
+  return {eff:'智能风助航行',low:'低收益待机',safe:'主机保护',bad:'恶劣海况安全'}[m]||'智能自动';
+}
+
+function updateLabels(){
+  const m=mode();
+  const wind=val('wind'), dir=val('dir'), head=val('head');
+  const side=Math.abs(Math.sin((dir-head)*Math.PI/180));
+  const modeFactor=m==='eff'?1:m==='low'?.42:m==='safe'?.18:0;
+  const thrust=Math.max(0,Math.round(519*Math.pow(wind/12.6,2)*(0.85+0.15*side)*modeFactor));
+  const rpm=Math.round(Math.min(220,Math.max(80,wind*11.5)));
+  const save=Math.max(0,Math.min(32,4+thrust*0.020+(77/100)*5));
+  const eq=Math.round(thrust*14.2*0.5144*0.28);
+  $('vWind').textContent=wind.toFixed(1)+' m/s';
+  $('vDir').textContent=String(dir).padStart(3,'0')+'°';
+  $('vHead').textContent=String(head).padStart(3,'0')+'°';
+  $('vEngine').textContent=val('engine')+'%';
+  $('vSea').textContent=val('seaState')+' 级';
+  $('hWind').textContent=wind.toFixed(1)+' m/s';
+  $('hHead').textContent=String(head).padStart(3,'0')+'°';
+  $('hSpeed').textContent='14.2 kn';
+  $('modeText').textContent=modeName(m);
+  let eff=m==='eff'?68:m==='low'?44:m==='safe'?31:12;
+  $('effRing').textContent=eff+'%';
+  document.querySelector('.ring').style.background=`conic-gradient(var(--accent) ${eff}%,var(--border-lt) 0)`;
+  $('saveText').textContent=save.toFixed(1)+'%';
+  let html='';
+  const weights=[0.23,0.25,0.26,0.26];
+  for(let i=0;i<4;i++){
+    let rth=Math.round(thrust*weights[i]);
+    html+=`<div class="rotor-row"><span>RS-${i+1}</span><b>${rth} kN</b><div class="bar"><i style="width:${Math.min(100,rth/1.1)}%"></i></div></div>`;
+  }
+  $('rotorList').innerHTML=html;
+  $('sumThrust').textContent=thrust.toLocaleString()+' kN';
+  $('eqSave').textContent=eq.toLocaleString()+' kW';
+}
+
+function addExhaust(x,y,tx,ty){
+  const wp=windPace();
+  for(let i=0;i<Math.max(1,Math.round(1+wp));i++){
+    particles.push({
+      x,y,
+      vx:(tx-x)/(150/wp)+(Math.random()-.5)*.35*wp,
+      vy:(ty-y)/(150/wp)+(Math.random()-.5)*.35*wp,
+      life:70+Math.random()*45,
+      size:2.6+Math.random()*3.2+wp*.35,
+      color:Math.random()>.45?'rgba(180,100,30,.78)':'rgba(200,160,40,.64)'
+    });
+  }
+}
+
+function drawOcean(){
+  const w=innerWidth,h=innerHeight,wp=windPace();
+  const grad=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,Math.max(w,h)*.72);
+  grad.addColorStop(0,'#dce8f0'); grad.addColorStop(1,'#c5d6e0');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(0,0,0,.035)'; ctx.lineWidth=1;
+  const gx=(t*.22*wp)%40, gy=(t*.08*wp)%40;
+  for(let x=-40;x<w+40;x+=40){ctx.beginPath();ctx.moveTo(x+gx,0);ctx.lineTo(x+gx,h);ctx.stroke();}
+  for(let y=-40;y<h+40;y+=40){ctx.beginPath();ctx.moveTo(0,y+gy);ctx.lineTo(w,y+gy);ctx.stroke();}
+  const angle=val('dir')*Math.PI/180;
+  ctx.strokeStyle='rgba(21,94,117,.09)'; ctx.lineWidth=1.3;
+  for(let i=0;i<22;i++){
+    const base=(i*137 + t*3.2*wp)%(w+h);
+    const x=(base*1.35)%w, y=(i*53 + t*1.15*wp)%h;
+    const len=22+val('wind')*2.2;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(angle)*len,y+Math.sin(angle)*len);ctx.stroke();
+  }
+}
+
+function drawArrow(x,y,ang,len,color,label){
+  ctx.save();ctx.translate(x,y);ctx.rotate(ang);
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-len);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,-len-8);ctx.lineTo(-6,-len+4);ctx.lineTo(6,-len+4);ctx.closePath();ctx.fill();
+  ctx.restore();
+  ctx.fillStyle='#0f172a'; ctx.font='bold 10px "Geist","PingFang SC",sans-serif';
+  ctx.fillText(label,x+6,y-len-6);
+}
+
+function drawShip(){
+  const cx=innerWidth/2,cy=innerHeight/2+22,heading=val('head')*Math.PI/180;
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(heading);
+  ctx.shadowBlur=20; ctx.shadowColor='rgba(0,0,0,.10)';
+  ctx.fillStyle='#1a3650'; ctx.beginPath();
+  ctx.moveTo(0,-165); ctx.quadraticCurveTo(54,-125,45,125);
+  ctx.quadraticCurveTo(0,170,-45,125); ctx.quadraticCurveTo(-54,-125,0,-165);
+  ctx.closePath();ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle='rgba(255,255,255,.22)'; ctx.fillRect(-30,-125,60,230);
+  ctx.fillStyle='rgba(0,0,0,.08)'; ctx.fillRect(-40,80,80,40);
+
+  const rotors=[[-22,-88],[22,-88],[-22,24],[22,24]];
+  rotors.forEach((r,i)=>{
+    ctx.fillStyle='rgba(21,94,117,.16)'; ctx.beginPath();
+    ctx.arc(r[0],r[1],21,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#c8dae5'; ctx.beginPath();
+    ctx.ellipse(r[0],r[1],12,19,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#155e75'; ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(r[0],r[1],24,0,t*.08+i);ctx.stroke();
+
+    const g=localToScreen(r[0],r[1],cx,cy,heading);
+    drawArrow(g.x,g.y,(val('dir')-val('head')+95)*Math.PI/180,42,'#0d9488',
+      '推力 '+Math.round(val('wind')*8+i*3)+' kN');
+  });
+
+  const funnel=localToScreen(0,105,cx,cy,heading);
+  rotors.forEach(r=>{
+    const target=localToScreen(r[0],r[1],cx,cy,heading);
+    if(mode()!=='bad')addExhaust(funnel.x,funnel.y,target.x,target.y);
+  });
+  ctx.restore();
+
+  drawArrow(cx+200,cy-140,val('dir')*Math.PI/180,45+val('wind')*2.1,'#3b82c4','风向 '+val('dir')+'°');
+  drawArrow(cx+56,cy-140,val('head')*Math.PI/180,65,'#155e75','航向 '+val('head')+'°');
+}
+
+function localToScreen(x,y,cx,cy,ang){
+  return {x:cx+x*Math.cos(ang)-y*Math.sin(ang),y:cy+x*Math.sin(ang)+y*Math.cos(ang)};
+}
+
+function drawParticles(){
+  const wp=windPace();
+  particles=particles.filter(p=>p.life>0);
+  particles.forEach(p=>{
+    p.x+=p.vx*wp;p.y+=p.vy*wp;p.life-=0.8+wp*.15;
+    ctx.fillStyle=p.color.replace(')',','+(Math.max(0,p.life)/120)+')').replace('rgba','rgba');
+    ctx.beginPath();ctx.arc(p.x,p.y,Math.max(0.7,p.size*(p.life/120)),0,Math.PI*2);ctx.fill();
+  });
+}
+
+function loop(){
+  if(auto)t+=windPace();
+  updateLabels();
+  drawOcean();
+  drawParticles();
+  drawShip();
+  requestAnimationFrame(loop);
+}
+
+['wind','dir','head','engine','seaState'].forEach(id=>$(id).addEventListener('input',updateLabels));
+loop();
+</script>
+</body>
+</html>

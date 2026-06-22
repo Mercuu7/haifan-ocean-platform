@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>海帆智擎 · 智慧海洋绿色助航平台</title>
+<meta name="description" content="面向绿色智慧航运的废气余能驱动型智能滚筒帆系统 — 融合演示级轻量评分模型、安全规则校核、典型航区识别与航次碳账本。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   海帆智擎 · 设计系统 v8
+   基准: DESIGN_VARIANCE=8  MOTION_INTENSITY=6  VISUAL_DENSITY=4
+   克制 · 专业 · 呼吸感
+   ============================================================ */
+:root {
+  --bg:        #f1f5f9;
+  --surface:   #ffffff;
+  --text:      #0f172a;
+  --text-mid:  #334155;
+  --muted:     #64748b;
+  --faint:     #94a3b8;
+  --accent:    #155e75;
+  --accent-hv: #0e4255;
+  --accent-lt: #ecfeff;
+  --accent-pale:#f0f9fb;
+  --border:    #cbd5e1;
+  --border-lt: #e2e8f0;
+  --data-up:   #0d9488;
+  --data-warn: #a16207;
+  --data-down: #b91c1c;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15,23,42,0.06), 0 2px 4px -1px rgba(15,23,42,0.03);
+  --shadow-lg: 0 20px 40px -15px rgba(15,23,42,0.06), 0 8px 16px -8px rgba(15,23,42,0.04);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --mw: 1200px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+
+body {
+  font-family: "Geist", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 15px;
+  font-weight: 450;
+  overflow-x: hidden;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4 { font-weight: 750; color: var(--text); letter-spacing: -0.025em; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); letter-spacing: -0.035em; line-height: 1.08; font-weight: 850; }
+h2 { font-size: 1.5rem; letter-spacing: -0.02em; font-weight: 750; }
+h3 { font-size: 1.1rem; font-weight: 650; letter-spacing: -0.015em; }
+
+.mono { font-family: "Geist Mono", "Cascadia Code", "Fira Code", "JetBrains Mono", monospace; font-feature-settings: "tnum" 1; }
+
+/* ── Scroll Reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.05s; }
+.reveal-d2 { transition-delay: 0.12s; }
+.reveal-d3 { transition-delay: 0.19s; }
+.reveal-d4 { transition-delay: 0.26s; }
+.reveal-d5 { transition-delay: 0.33s; }
+
+/* ── Container ── */
+.wrap { max-width: var(--mw); margin: 0 auto; padding: 0 32px; }
+
+/* ── Navigation — Liquid Glass ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(241, 245, 249, 0.72);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 17px; color: var(--text);
+  letter-spacing: -0.01em; text-decoration: none;
+}
+.nav-brand .brand-icon {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+}
+.nav-brand .brand-icon svg { width: 24px; height: 24px; }
+.nav-links { display: flex; gap: 2px; }
+.nav-links a {
+  text-decoration: none; color: var(--muted); font-size: 13px; font-weight: 550;
+  padding: 7px 16px; border-radius: var(--radius-sm);
+  transition: all 0.22s var(--ease-out);
+  letter-spacing: -0.005em;
+}
+.nav-links a:hover { color: var(--text); background: var(--accent-lt); }
+.nav-links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Hero — Asymmetric Split (DESIGN_VARIANCE=8) ── */
+.hero {
+  padding: 88px 0 64px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+  align-items: center; position: relative;
+  min-height: auto;
+}
+.hero-content { max-width: 580px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-eyebrow::before {
+  content: ""; width: 28px; height: 1.5px;
+  background: var(--accent); border-radius: 2px;
+}
+.hero h1 { margin-bottom: 20px; }
+.hero .lead {
+  font-size: 1.05rem; color: var(--text-mid);
+  line-height: 1.8; margin-bottom: 44px;
+  max-width: 52ch;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.hero-visual {
+  position: relative;
+  display: grid; place-items: center;
+  min-height: 380px;
+}
+.hero-visual .abstract-ring {
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 45%, var(--accent-lt) 0%, transparent 65%);
+  position: relative;
+  animation: heroFloat 8s var(--ease-in-out) infinite;
+}
+.hero-visual .abstract-ring::before {
+  content: "";
+  position: absolute; inset: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  animation: heroPulse 4s var(--ease-in-out) infinite;
+}
+.hero-visual .abstract-ring::after {
+  content: "";
+  position: absolute; inset: 80px;
+  border-radius: 50%;
+  background: var(--accent-lt);
+  opacity: 0.5;
+}
+.hero-visual .ring-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: heroOrbit 12s linear infinite;
+}
+.hero-visual .ring-dot:nth-child(2) { animation-delay: -4s; animation-duration: 14s; }
+.hero-visual .ring-dot:nth-child(3) { animation-delay: -8s; animation-duration: 10s; }
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes heroPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.04); opacity: 0.8; }
+}
+@keyframes heroOrbit {
+  from { transform: rotate(0deg) translateX(160px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(160px) rotate(-360deg); }
+}
+
+/* ── Metrics Strip — Border-separated, anti-card (VISUAL_DENSITY=4) ── */
+.metrics-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 96px;
+  position: relative;
+}
+.metrics-strip::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0;
+  height: 1px; background: var(--border);
+}
+.metrics-strip::after {
+  content: ""; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px; background: var(--border);
+}
+.m-item {
+  padding: 36px 32px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.m-item:last-child { border-right: none; }
+.m-item .m-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--faint); text-transform: uppercase; margin-bottom: 10px;
+}
+.m-item .m-value {
+  font-size: 2.6rem; font-weight: 900; color: var(--text);
+  font-family: "Geist Mono", "Cascadia Code", monospace;
+  font-feature-settings: "tnum" 1; letter-spacing: -0.03em;
+  line-height: 1;
+}
+.m-item .m-value.accent { color: var(--accent); }
+.m-item .m-sub {
+  font-size: 12px; color: var(--muted); margin-top: 8px;
+  font-weight: 500;
+}
+
+/* ── Section ── */
+.section { padding: 0 0 96px; }
+.section-header { margin-bottom: 48px; }
+.section-header h2 { margin-bottom: 8px; font-size: 1.6rem; }
+.section-header p { color: var(--muted); font-size: 14px; font-weight: 500; }
+
+/* ── Bento Grid — Motion-Engine (DESIGN_VARIANCE=8) ── */
+.bento {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+
+.bento-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+.bento-tile:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+.bento-tile .tile-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
+  color: var(--faint); text-transform: uppercase; margin-bottom: 14px;
+}
+.bento-tile h3 { font-size: 1.18rem; margin-bottom: 8px; }
+.bento-tile .tile-desc {
+  color: var(--muted); font-size: 13px; line-height: 1.7; margin-bottom: 18px;
+}
+.bento-tile .tile-tags { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.bento-tile .tile-tags span {
+  font-size: 10px; font-weight: 600; color: var(--accent);
+  background: var(--accent-lt); padding: 3px 10px; border-radius: 999px;
+}
+.bento-tile .tile-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; font-size: 13px; font-weight: 700; color: var(--accent);
+  transition: gap 0.22s var(--ease-out);
+}
+.bento-tile .tile-link:hover { gap: 12px; }
+
+/* ── Bento Tile 1: Intelligent List ── */
+.bento-tile.intelligent-list .sort-list {
+  display: flex; flex-direction: column; gap: 1px;
+  border: 1px solid var(--border-lt); border-radius: var(--radius-md);
+  overflow: hidden; margin-top: 4px;
+}
+.bento-tile.intelligent-list .sort-item {
+  display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+  background: var(--surface); transition: all 0.5s var(--ease-out);
+  font-size: 13px; color: var(--text-mid);
+}
+.bento-tile.intelligent-list .sort-item .sort-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+}
+.bento-tile.intelligent-list .sort-item .sort-dot.high { background: var(--data-up); }
+.bento-tile.intelligent-list .sort-item .sort-dot.mid  { background: var(--accent); }
+.bento-tile.intelligent-list .sort-item .sort-dot.low { background: var(--faint); }
+
+/* ── Bento Tile 2: Command Input ── */
+.bento-tile.cmd-input .cmd-bar {
+  display: flex; align-items: center; gap: 10px;
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 12px 16px; background: var(--bg);
+  margin-bottom: 12px;
+}
+.bento-tile.cmd-input .cmd-bar .cmd-icon {
+  width: 20px; height: 20px; flex-shrink: 0; color: var(--accent);
+}
+.bento-tile.cmd-input .cmd-text {
+  font-family: "Geist Mono", monospace; font-size: 13px; color: var(--text-mid);
+  flex: 1; white-space: nowrap; overflow: hidden;
+}
+.bento-tile.cmd-input .cmd-cursor {
+  display: inline-block; width: 8px; height: 16px; background: var(--accent);
+  animation: blink 0.9s steps(1) infinite; vertical-align: text-bottom;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.bento-tile.cmd-input .cmd-status {
+  font-size: 10px; color: var(--faint); display: flex; align-items: center; gap: 6px;
+}
+.bento-tile.cmd-input .shimmer-bar {
+  height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--border-lt) 0%, var(--accent-lt) 50%, var(--border-lt) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease infinite;
+  margin-top: 8px;
+}
+
+/* ── Bento Tile 3: Live Status ── */
+.bento-tile.live-status .status-row {
+  display: flex; align-items: center; gap: 10px; padding: 9px 0;
+  border-bottom: 1px solid var(--border-lt);
+}
+.bento-tile.live-status .status-row:last-child { border-bottom: none; }
+.bento-tile.live-status .breath-dot {
+  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+}
+.bento-tile.live-status .breath-dot.online {
+  background: var(--data-up);
+  animation: statusPulse 2.4s var(--ease-out) infinite;
+}
+.bento-tile.live-status .breath-dot.warn {
+  background: var(--data-warn);
+  animation: statusPulse 1.8s var(--ease-out) infinite;
+}
+.bento-tile.live-status .status-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+.bento-tile.live-status .status-val { font-size: 12px; color: var(--muted); font-family: "Geist Mono", monospace; }
+
+/* ── Bento Tile 4: Wide Data Stream ── */
+.bento-tile.data-stream .carousel-track {
+  display: flex; gap: 14px; overflow: hidden; position: relative;
+}
+.bento-tile.data-stream .carousel-inner {
+  display: flex; gap: 14px; animation: carouselScroll 20s linear infinite;
+  min-width: max-content;
+}
+@keyframes carouselScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.bento-tile.data-stream .carousel-chip {
+  flex-shrink: 0; padding: 10px 18px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); font-size: 12px; font-weight: 600;
+  color: var(--text-mid); white-space: nowrap;
+  transition: border-color 0.2s var(--ease-out);
+}
+.bento-tile.data-stream .carousel-chip:hover { border-color: var(--accent); }
+.bento-tile.data-stream .carousel-chip .c-val {
+  color: var(--accent); font-family: "Geist Mono", monospace; font-weight: 700;
+}
+
+/* ── Keep old .entry-link arrow for backward compat ── */
+.entry .entry-link .link-arrow { display: inline-block; transition: transform 0.22s var(--ease-out); }
+.entry .entry-link:hover .link-arrow { transform: translateX(4px); }
+
+/* ── Button Primitive ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 700;
+  font-family: inherit; letter-spacing: -0.005em;
+  text-decoration: none; cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.22s var(--ease-out);
+  position: relative;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary {
+  background: var(--accent); color: #fff;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.08), 0 0 0 0 rgba(21,94,117,0);
+  transition: all 0.22s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+.btn-primary:hover {
+  background: var(--accent-hv);
+  box-shadow: 0 4px 14px -4px rgba(21,94,117,0.3), 0 0 0 4px rgba(21,94,117,0.08);
+}
+.btn-ghost {
+  background: transparent; color: var(--text-mid);
+  border-color: var(--border);
+}
+.btn-ghost:hover { background: var(--accent-lt); border-color: var(--accent-lt); color: var(--accent); }
+
+/* ── Pipeline — Technical workflow ── */
+.pipeline {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.pipeline-step {
+  background: var(--surface); padding: 36px 28px;
+}
+.pipeline-step .step-num {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--accent-lt); color: var(--accent);
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums;
+  margin-bottom: 18px;
+}
+.pipeline-step .step-body h4 { font-size: 1rem; margin-bottom: 6px; color: var(--text); }
+.pipeline-step .step-body p { color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+/* ── Footer ── */
+.foot {
+  border-top: 1px solid var(--border); padding: 32px 0; margin-top: 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+.foot p { color: var(--faint); font-size: 12px; font-weight: 500; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%) translateY(16px);
+  background: var(--text); color: #fff; border-radius: 999px;
+  padding: 12px 24px; font-size: 13px; font-weight: 600;
+  box-shadow: 0 16px 40px rgba(15,23,42,0.2);
+  z-index: 1000; opacity: 0; pointer-events: none;
+  transition: all 0.3s var(--spring);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Perpetual Micro: Status Pulse (MOTION_INTENSITY=6) ── */
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(13,148,136,0); }
+}
+.live-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--data-up);
+  animation: statusPulse 2.2s var(--ease-in-out) infinite;
+}
+
+/* ── Shimmer (for loading placeholders) ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr; gap: 48px;
+    padding: 56px 0 48px;
+  }
+  .hero-visual { display: none; }
+  .metrics-strip { grid-template-columns: 1fr 1fr; }
+  .m-item { padding: 28px 24px; border-bottom: 1px solid var(--border); }
+  .m-item:nth-child(3), .m-item:nth-child(4) { border-bottom: none; }
+  .bento { grid-template-columns: 1fr; }
+  .bento-tile[style*="grid-column:1/3"],
+  .bento-tile[style*="grid-row:1/3"] { grid-column: auto; grid-row: auto; }
+  .pipeline { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 20px; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .metrics-strip { grid-template-columns: 1fr; }
+  .m-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .m-item:last-child { border-bottom: none; }
+  .hero { padding: 40px 0 36px; }
+  .foot { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">
+    <span class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+    </span>
+    海帆智擎
+  </a>
+  <div class="nav-links">
+    <a href="showcase.html">项目展示</a>
+    <a href="dashboard.html">驾驶舱</a>
+    <a href="visualizer.html">可视化</a>
+    <a href="http://localhost:8501" target="_blank" onclick="openStreamlit();return false">仿真平台</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-content reveal">
+      <div class="hero-eyebrow">Smart Ocean · Green Shipping</div>
+      <h1>面向绿色智慧航运的<br>废气余能驱动型智能滚筒帆系统</h1>
+      <p class="lead">融合废气余能回收、滚筒帆助航、演示级轻量评分模型与安全规则校核，构建"硬件装置 + 智能控制 + 仿真展示"的船舶智能减排解决方案。</p>
+      <div class="hero-actions">
+        <a href="showcase.html" class="btn btn-primary">
+          探索技术方案
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="dashboard.html" class="btn btn-ghost">打开驾驶舱</a>
+      </div>
+    </div>
+    <div class="hero-visual reveal reveal-d2" aria-hidden="true">
+      <div class="abstract-ring">
+        <div class="ring-dot" style="top:50%;left:50%;"></div>
+        <div class="ring-dot" style="top:50%;left:50%;"></div>
+        <div class="ring-dot" style="top:50%;left:50%;"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="metrics-strip reveal reveal-d1">
+    <div class="m-item">
+      <div class="m-label">节能潜力</div>
+      <div class="m-value accent">18.3<span style="font-size:0.45em;font-weight:700">%</span></div>
+      <div class="m-sub">较基准航线降低</div>
+    </div>
+    <div class="m-item">
+      <div class="m-label">协同推力估算</div>
+      <div class="m-value">519<span style="font-size:0.45em;font-weight:700">kN</span></div>
+      <div class="m-sub">4座装置 · 简化模型计算</div>
+    </div>
+    <div class="m-item">
+      <div class="m-label">年减排 CO₂</div>
+      <div class="m-value">6,540<span style="font-size:0.45em;font-weight:700">t</span></div>
+      <div class="m-sub">中东—东亚航线估算</div>
+    </div>
+    <div class="m-item">
+      <div class="m-label">CII 改善</div>
+      <div class="m-value accent">+0.8<span style="font-size:0.45em;font-weight:700">级</span></div>
+      <div class="m-sub">C → B 评级提升</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-header reveal">
+      <h2>系统入口</h2>
+      <p>四个模块分别承担展示、功能、态势、机理四种角色</p>
+    </div>
+    <div class="bento">
+      <!-- Tile 1: Intelligent List — 项目展示 (2 cols wide) -->
+      <article class="bento-tile intelligent-list reveal reveal-d1" style="grid-column:1;grid-row:1/3;">
+        <div class="tile-label">01 / 项目展示</div>
+        <h3>项目展示页</h3>
+        <p class="tile-desc">完整呈现项目定位、六层系统架构、四大技术创新与 IMO 合规分析——面向评审专家的全维度技术叙事。</p>
+        <div class="sort-list" id="sortList">
+          <div class="sort-item"><span class="sort-dot high"></span>六层系统架构总览</div>
+          <div class="sort-item"><span class="sort-dot high"></span>四大技术创新详析</div>
+          <div class="sort-item"><span class="sort-dot mid"></span>IMO合规与CII评级</div>
+          <div class="sort-item"><span class="sort-dot mid"></span>装置结构与传动链路</div>
+          <div class="sort-item"><span class="sort-dot low"></span>关键技术指标汇总</div>
+        </div>
+        <div style="margin-top: 16px;">
+          <a class="tile-link" href="showcase.html">
+            打开展示页
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Tile 2: Command Input — Streamlit (1 col) -->
+      <article class="bento-tile cmd-input reveal reveal-d2" style="grid-column:2;grid-row:1;">
+        <div class="tile-label">02 / 仿真平台</div>
+        <h3>Streamlit 智能决策引擎</h3>
+        <div class="cmd-bar">
+          <svg class="cmd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="cmd-text" id="typewriter"></span><span class="cmd-cursor"></span>
+        </div>
+        <p class="cmd-status">轻量评分模型 + 安全规则校核 — 工况参数 → 控制策略</p>
+        <div class="shimmer-bar"></div>
+        <div style="margin-top: 14px;">
+          <a class="tile-link" href="http://localhost:8501" target="_blank" onclick="openStreamlit();return false">
+            打开仿真平台
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Tile 3: Live Status — 驾驶舱 (1 col) -->
+      <article class="bento-tile live-status reveal reveal-d3" style="grid-column:2;grid-row:2;">
+        <div class="tile-label">03 / 运行态势</div>
+        <h3>智能驾驶舱</h3>
+        <div class="status-row">
+          <span class="breath-dot online"></span>
+          <span class="status-name">推荐转速</span>
+          <span class="status-val">144 rpm</span>
+        </div>
+        <div class="status-row">
+          <span class="breath-dot online"></span>
+          <span class="status-name">协同推力</span>
+          <span class="status-val">519 kN</span>
+        </div>
+        <div class="status-row">
+          <span class="breath-dot warn"></span>
+          <span class="status-name">海况监测</span>
+          <span class="status-val">2 级 · 正常</span>
+        </div>
+        <div class="status-row">
+          <span class="breath-dot online"></span>
+          <span class="status-name">系统状态</span>
+          <span class="status-val">安全运行</span>
+        </div>
+        <div style="margin-top: 14px;">
+          <a class="tile-link" href="dashboard.html">
+            打开驾驶舱
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Tile 4: Wide Data Stream — 可视化 (full width bottom) -->
+      <article class="bento-tile data-stream reveal reveal-d4" style="grid-column:1/3;grid-row:3;padding:24px 28px;">
+        <div class="tile-label">04 / 核心机理</div>
+        <h3 style="margin-bottom:16px;">机理可视化</h3>
+        <div class="carousel-track">
+          <div class="carousel-inner" id="dataCarousel">
+            <span class="carousel-chip">风速 <b class="c-val">12.6 m/s</b></span>
+            <span class="carousel-chip">风向 <b class="c-val">128°</b></span>
+            <span class="carousel-chip">船速 <b class="c-val">14.2 kn</b></span>
+            <span class="carousel-chip">推力 <b class="c-val">519 kN</b></span>
+            <span class="carousel-chip">节能 <b class="c-val">18.3%</b></span>
+            <span class="carousel-chip">CII <b class="c-val">+0.8 级</b></span>
+            <span class="carousel-chip">转速 <b class="c-val">144 rpm</b></span>
+            <span class="carousel-chip">海况 <b class="c-val">2 级</b></span>
+            <!-- Duplicated for seamless loop -->
+            <span class="carousel-chip">风速 <b class="c-val">12.6 m/s</b></span>
+            <span class="carousel-chip">风向 <b class="c-val">128°</b></span>
+            <span class="carousel-chip">船速 <b class="c-val">14.2 kn</b></span>
+            <span class="carousel-chip">推力 <b class="c-val">519 kN</b></span>
+            <span class="carousel-chip">节能 <b class="c-val">18.3%</b></span>
+            <span class="carousel-chip">CII <b class="c-val">+0.8 级</b></span>
+            <span class="carousel-chip">转速 <b class="c-val">144 rpm</b></span>
+            <span class="carousel-chip">海况 <b class="c-val">2 级</b></span>
+          </div>
+        </div>
+        <div style="margin-top: 14px;">
+          <a class="tile-link" href="visualizer.html">
+            打开可视化
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-header">
+      <h2>核心技术链路</h2>
+      <p>从多源感知到碳账本——闭环技术流程</p>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step reveal reveal-d1">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>多源感知</h4>
+          <p>风速风向仪、波浪雷达、主机ECU、AIS——6类船舶与环境数据接口实时采集，构建多源异构感知网络。</p>
+        </div>
+      </div>
+      <div class="pipeline-step reveal reveal-d2">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>智能决策</h4>
+          <p>轻量评分模型输入工况参数，结合独立安全规则引擎，输出推荐转速、进气阀/旁通阀开度与协同推力估算。</p>
+        </div>
+      </div>
+      <div class="pipeline-step reveal reveal-d3">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>安全校核</h4>
+          <p>排气背压保护（阈值25 kPa自动旁通）、恶劣海况锁定（≥5级停止助航）、人工急停联锁——安全链路独立运行。</p>
+        </div>
+      </div>
+      <div class="pipeline-step reveal reveal-d4">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>碳账本闭环</h4>
+          <p>航次碳账本自动计算每段航程CO₂减排量、等效节能与CII改善——形成可追溯、可审计的绿色航运数据链。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>海帆智擎 · 面向绿色智慧航运的废气余能驱动型智能滚筒帆系统 · 智慧海洋创新大赛</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ── Toast ── */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function() { t.classList.remove('show'); }, 2400);
+}
+function openStreamlit() {
+  window.open('http://localhost:8501', '_blank');
+  setTimeout(function() {
+    showToast('若未打开，请先运行：RUN_STREAMLIT.bat 或 streamlit run streamlit_app.py');
+  }, 800);
+}
+
+/* ── IntersectionObserver: Scroll-triggered Reveals (MOTION_INTENSITY=6) ── */
+(function() {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  /* ── Bento 1: Intelligent List auto-sort ── */
+  (function() {
+    var list = document.getElementById('sortList');
+    if (!list) return;
+    var items = Array.from(list.querySelectorAll('.sort-item'));
+    setInterval(function() {
+      // Rotate: move last item to first position with smooth transition
+      var last = items.pop();
+      items.unshift(last);
+      list.innerHTML = '';
+      items.forEach(function(item) { list.appendChild(item); });
+    }, 3500);
+  })();
+
+  /* ── Bento 2: Command Input typewriter ── */
+  (function() {
+    var el = document.getElementById('typewriter');
+    if (!el) return;
+    var prompts = [
+      '风况 12.6 m/s · 航向 045° · 主机负荷 72%',
+      '评估侧风分量... 推力潜力 519 kN',
+      '背压 3.2 kPa · 安全校验通过',
+      '推荐: 转速 144 rpm · 入口阀 77% · 旁通 23%',
+      '海况 2 级 · 节能预估 18.3% · CII B级'
+    ];
+    var pi = 0, ci = 0, forward = true;
+    function tick() {
+      var p = prompts[pi];
+      el.textContent = p.substring(0, ci);
+      if (forward) {
+        ci++;
+        if (ci > p.length) { forward = false; setTimeout(tick, 1400); return; }
+      } else {
+        ci--;
+        if (ci < 1) { forward = true; pi = (pi + 1) % prompts.length; setTimeout(tick, 300); return; }
+      }
+      setTimeout(tick, forward ? 45 : 18);
+    }
+    tick();
+  })();
+})();
+</script>
+</body>
+</html>
