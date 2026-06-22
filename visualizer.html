@@ -4,35 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>机理可视化 · 海帆智擎</title>
-<meta name="description" content="海帆智擎船舶交互可视化——实时展现滚筒帆、风向、废气能量流与马格努斯推力的核心机理。">
+<meta name="description" content="海帆智擎能量链路机理演示——展示废气余能、透平取能、滚筒帆旋转与马格努斯推力的传递过程。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   海帆智擎 · 可视化设计系统 v8
+   海帆智擎 · 可视化设计系统 v9
    基准: DESIGN_VARIANCE=8  MOTION_INTENSITY=6  VISUAL_DENSITY=4
-   极简 UI，Canvas 为主角
+   Liquid Glass · Canvas 为主角
    ============================================================ */
 :root {
-  --bg:        #e2e8f0;
+  --bg:        #f1f5f9;
   --surface:   #ffffff;
-  --surface2:  #f7f9fb;
+  --surface2:  #f8fafc;
   --text:      #0f172a;
+  --text-mid:  #334155;
   --muted:     #64748b;
   --faint:     #94a3b8;
   --accent:    #155e75;
+  --accent-hv: #0e4255;
   --accent-lt: #ecfeff;
-  --border:    #c2cdd8;
-  --border-lt: #dde3ea;
+  --accent-pale:#f0f9fb;
+  --border:    #cbd5e1;
+  --border-lt: #e2e8f0;
   --data-up:   #0d9488;
   --data-warn: #a16207;
+  --data-down: #b91c1c;
   --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
-  --shadow-md: 0 4px 14px -4px rgba(15,23,42,0.06);
-  --radius-sm: 5px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --shadow-md: 0 4px 12px -2px rgba(15,23,42,0.06), 0 2px 4px -1px rgba(15,23,42,0.03);
+  --shadow-lg: 0 20px 40px -15px rgba(15,23,42,0.06), 0 8px 16px -8px rgba(15,23,42,0.04);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,16 +60,16 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
 
 /* ── Topbar — Liquid Glass ── */
 .top {
-  position: absolute; top: 0; left: 0; right: 0; height: 46px; z-index: 10;
-  background: rgba(255,255,255,0.84);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border-bottom: 1px solid rgba(194,205,216,0.6);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+  position: absolute; top: 0; left: 0; right: 0; height: 48px; z-index: 10;
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  border-bottom: 1px solid rgba(203,213,225,0.55);
+  box-shadow: 0 1px 3px rgba(15,23,42,0.03), inset 0 1px 0 rgba(255,255,255,0.6);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 18px;
 }
-.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; letter-spacing: -0.01em; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; letter-spacing: -0.015em; }
 .brand svg { width: 20px; height: 20px; color: var(--accent); }
 .navlinks { display: flex; gap: 2px; }
 .navlinks a {
@@ -77,84 +85,100 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
   background: var(--surface2); color: var(--muted);
   border: 1px solid var(--border-lt);
   display: flex; align-items: center; gap: 5px;
+  transition: all 0.2s var(--ease-out);
 }
 .chip b { color: var(--accent); font-family: "Geist Mono", monospace; }
+.chip.ok { background: var(--accent-pale); border-color: rgba(13,148,136,0.20); }
 .chip.ok b { color: var(--data-up); }
 .live-dot {
   display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: var(--data-up);
-  animation: statusPulse 2.4s var(--ease-out) infinite;
+  box-shadow: 0 0 6px rgba(13,148,136,0.30);
+  animation: statusPulse 2.4s ease-in-out infinite;
 }
 @keyframes statusPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.45); }
-  50% { box-shadow: 0 0 0 7px rgba(13,148,136,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.45); opacity: 1; }
+  50% { box-shadow: 0 0 0 7px rgba(13,148,136,0); opacity: 0.65; }
 }
 
-/* ── Panels ── */
+/* ── Panels — Liquid Glass ── */
 .panel {
   position: absolute; z-index: 10;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(10px) saturate(140%);
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
-  border: 1px solid rgba(221,227,234,0.65);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid rgba(203,213,225,0.6);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
-  box-shadow: 0 2px 14px rgba(15,23,42,0.04), inset 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.5);
+  animation: panelIn 0.45s var(--ease-out) both;
 }
+@keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.left   { animation-delay: 0.05s; }
+.right  { animation-delay: 0.12s; }
+.bottom { animation-delay: 0.19s; }
+.energy-panel { animation-delay: 0.08s; }
+.mini-map { animation-delay: 0.15s; }
+
 .panel-hdr {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--faint);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.07em; color: var(--faint);
   text-transform: uppercase; margin-bottom: 12px;
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 7px;
 }
-.panel-hdr::before { content: ""; width: 3px; height: 11px; border-radius: 2px; background: var(--accent); }
+.panel-hdr::before { content: ""; width: 3px; height: 12px; border-radius: 2px; background: var(--accent); }
 
 /* ── Positions ── */
-.left   { left: 12px; top: 58px; width: 360px; }
-.right  { right: 12px; top: 58px; width: 380px; }
-.bottom { left: 50%; bottom: 12px; transform: translateX(-50%); padding: 12px 24px; display: flex; gap: 22px; }
-.mini-map { left: 12px; bottom: 12px; width: 360px; height: 155px; }
+.left   { left: 14px; top: 60px; width: 370px; }
+.right  { right: 14px; top: 60px; width: 390px; }
+.bottom { left: 50%; bottom: 14px; transform: translateX(-50%); padding: 12px 24px; display: flex; gap: 24px; }
+.mini-map { left: 14px; bottom: 14px; width: 370px; height: 160px; }
 
 /* ── Controls ── */
-.ctrl { margin: 7px 0; }
+.ctrl { margin: 8px 0; }
 .ctrl label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
-.ctrl label b { font-family: "Geist Mono", monospace; }
+.ctrl label b { font-family: "Geist Mono", monospace; color: var(--text-mid); }
 .ctrl input { width: 100%; accent-color: var(--accent); cursor: pointer; }
+.ctrl input:hover { accent-color: var(--accent-hv); }
 
-.mode-btns { display: grid; grid-template-columns: repeat(2,1fr); gap: 4px; }
+.mode-btns { display: grid; grid-template-columns: repeat(2,1fr); gap: 5px; }
 .btn {
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   background: var(--surface); color: var(--muted);
-  padding: 8px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;
+  padding: 9px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;
   transition: all 0.2s var(--ease-out);
 }
-.btn:hover { background: var(--accent-lt); color: var(--text); }
-.btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn:active { transform: scale(0.96); }
+.btn:hover { background: var(--accent-lt); color: var(--text); border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.btn.on { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; box-shadow: 0 2px 8px rgba(21,94,117,0.18); }
+.btn:active { transform: scale(0.96); transition: all 0.06s var(--ease-out); }
 
-.play { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.play { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
 .play button {
-  width: 32px; height: 32px; border-radius: 50%;
+  width: 33px; height: 33px; border-radius: 50%;
   border: 1px solid var(--border); background: var(--surface);
   color: var(--text); font-size: 12px; cursor: pointer;
   transition: all 0.2s var(--ease-out); display: grid; place-items: center;
 }
-.play button:hover { background: var(--accent-lt); }
+.play button:hover { background: var(--accent-lt); border-color: var(--accent); transform: scale(1.05); box-shadow: var(--shadow-sm); }
+.play button:active { transform: scale(0.94); }
 
 /* ── Metrics ── */
-.metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+.metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 .metric {
   background: var(--surface2); border: 1px solid var(--border-lt);
-  border-radius: var(--radius-sm); padding: 8px 9px;
+  border-radius: var(--radius-sm); padding: 9px 10px;
+  transition: all 0.2s var(--ease-out);
 }
-.metric small { display: block; font-size: 10px; color: var(--faint); }
-.metric b { font-size: 1.2rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; font-family: "Geist Mono", monospace; }
-.metric em { display: block; margin-top: 2px; color: var(--faint); font-size: 10px; font-style: normal; }
+.metric:hover { border-color: var(--border); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.metric small { display: block; font-size: 9px; color: var(--faint); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.metric b { font-size: 1.25rem; font-weight: 750; color: var(--text); font-variant-numeric: tabular-nums; font-family: "Geist Mono", monospace; }
+.metric em { display: block; margin-top: 3px; color: var(--faint); font-size: 10px; font-style: normal; }
 
 .ring {
-  width: 88px; height: 88px; border-radius: 50%;
+  width: 90px; height: 90px; border-radius: 50%;
   background: conic-gradient(var(--accent) 68%, var(--border-lt) 0);
   display: grid; place-items: center; margin: auto;
   transition: background 0.5s var(--ease-out);
+  box-shadow: 0 0 0 3px var(--surface2), var(--shadow-sm);
 }
 .ring span {
   width: 68px; height: 68px; border-radius: 50%; background: var(--surface);
@@ -162,36 +186,37 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
   font-family: "Geist Mono", monospace;
 }
 
-.rotor-row { display: grid; grid-template-columns: 1fr 50px 52px; gap: 5px; align-items: center; font-size: 10px; margin: 4px 0; }
+.rotor-row { display: grid; grid-template-columns: 1fr 52px 54px; gap: 6px; align-items: center; font-size: 10px; margin: 5px 0; color: var(--muted); }
+.rotor-row b { color: var(--text-mid); font-family: "Geist Mono", monospace; font-weight: 600; }
 .bar { height: 5px; background: var(--border-lt); border-radius: 3px; overflow: hidden; }
-.bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s var(--ease-out); }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s var(--ease-out); }
 
-.alert-line { border-top: 1px solid var(--border-lt); padding-top: 8px; margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.6; }
+.alert-line { border-top: 1px solid var(--border-lt); padding-top: 10px; margin-top: 10px; font-size: 11px; color: var(--muted); line-height: 1.7; }
 .linkage-note {
-  margin-top: 8px; background: rgba(236,254,255,0.5);
-  border: 1px solid var(--border-lt); border-radius: var(--radius-sm);
-  padding: 8px 10px; font-size: 11px; line-height: 1.65; color: var(--muted);
+  margin-top: 8px; background: var(--accent-pale);
+  border: 1px solid rgba(21,94,117,0.12); border-radius: var(--radius-sm);
+  padding: 9px 11px; font-size: 11px; line-height: 1.7; color: var(--muted);
 }
 .linkage-note b { color: var(--text); }
-.warn { color: var(--data-warn); font-weight: 600; }
+.warn { color: var(--data-warn); font-weight: 650; }
 
 /* ── Legend ── */
-.legend { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.legend { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); font-weight: 550; }
 .dot { width: 8px; height: 8px; border-radius: 2px; }
-.dwind { background: #3b82c4; border-radius: 50%; }
-.dthrust { background: #0d9488; }
-.dexhaust { background: #d97706; border-radius: 50%; }
-.drotor { background: var(--accent); border-radius: 50%; }
+.dwind { background: #3b82c4; border-radius: 50%; box-shadow: 0 0 4px rgba(59,130,196,0.3); }
+.dthrust { background: #0d9488; box-shadow: 0 0 4px rgba(13,148,136,0.3); }
+.dexhaust { background: #d97706; border-radius: 50%; box-shadow: 0 0 4px rgba(217,119,6,0.3); }
+.drotor { background: var(--accent); border-radius: 50%; box-shadow: 0 0 4px rgba(21,94,117,0.3); }
 
 /* ── Mini Map ── */
 .route-area {
   position: absolute; inset: 32px 10px 10px 10px;
   background: var(--surface2); border-radius: var(--radius-sm); border: 1px solid var(--border-lt);
 }
-.map-dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.map-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px rgba(21,94,117,0.25); }
 .m1 { left: 50px; top: 50px; }
-.m2 { left: 135px; top: 30px; background: var(--data-up); }
-.m3 { right: 36px; top: 12px; background: var(--data-warn); }
+.m2 { left: 135px; top: 30px; background: var(--data-up); box-shadow: 0 0 6px rgba(13,148,136,0.25); }
+.m3 { right: 36px; top: 12px; background: var(--data-warn); box-shadow: 0 0 6px rgba(161,98,7,0.25); }
 
 .zoom { position: absolute; right: 5px; bottom: 5px; display: flex; flex-direction: column; gap: 2px; }
 .zoom button {
@@ -199,17 +224,33 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
   background: var(--surface); color: var(--muted); cursor: pointer; font-size: 11px;
   transition: all 0.15s var(--ease-out);
 }
-.zoom button:hover { background: var(--accent-lt); }
+.zoom button:hover { background: var(--accent-lt); color: var(--text); }
 
 /* ── Status bar ── */
 .status-bar {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 26px; z-index: 7;
-  background: rgba(255,255,255,0.82); border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: flex-end; gap: 18px;
-  padding: 0 14px; font-size: 11px; color: var(--faint);
+  position: absolute; left: 0; right: 0; bottom: 0; height: 28px; z-index: 7;
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border-top: 1px solid rgba(203,213,225,0.5);
+  display: flex; align-items: center; justify-content: flex-end; gap: 20px;
+  padding: 0 16px; font-size: 11px; color: var(--faint); font-weight: 500;
 }
 
-/* ── Responsive ── */
+/* ── Energy chain overlay ── */
+.energy-panel{
+  left:50%; top:60px; transform:translateX(-50%); width:540px; padding:14px 18px;
+}
+.energy-steps{display:grid;grid-template-columns:1fr 22px 1fr 22px 1fr 22px 1fr;gap:8px;align-items:center;}
+.energy-step{position:relative;border:1px solid var(--border-lt);background:rgba(248,250,252,.90);border-radius:var(--radius-sm);padding:10px 11px;text-align:center;overflow:hidden;}
+.energy-step::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(21,94,117,.08),transparent);transform:translateX(-110%);animation:stepSweep 5.8s linear infinite;}
+.energy-step small{display:block;color:var(--faint);font-size:9px;font-weight:700;letter-spacing:.04em;margin-bottom:3px;}
+.energy-step b{display:block;color:var(--text);font-size:12px;font-weight:650;}
+.energy-arrow{height:2px;background:linear-gradient(90deg,#d97706,#155e75,#0d9488);position:relative;border-radius:999px;}
+.energy-arrow::after{content:"";position:absolute;right:-2px;top:-4px;border-left:8px solid #0d9488;border-top:5px solid transparent;border-bottom:5px solid transparent;}
+@keyframes stepSweep{0%{transform:translateX(-110%)}100%{transform:translateX(110%)}}
+@media(max-width:1150px){.energy-panel{display:none;}}
+
 @media (max-width: 1150px) {
   .left, .right { width: 290px; }
   .chips { display: none; }
@@ -225,7 +266,7 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="9"/><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><circle cx="12" cy="12" r="3"/>
     </svg>
-    海帆智擎 · 船舶交互可视化
+    海帆智擎 · 能量链路机理演示
   </div>
   <nav class="navlinks">
     <a href="index.html">入口</a>
@@ -242,14 +283,18 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
 </header>
 
 <aside class="panel left">
-  <div class="panel-hdr">环境与控制</div>
+  <div class="panel-hdr">演示工况设置</div>
   <div class="ctrl"><label>风速 <b id="vWind">12.6 m/s</b></label><input id="wind" min="0" max="30" step=".1" value="12.6" type="range"></div>
   <div class="ctrl"><label>风向 <b id="vDir">128°</b></label><input id="dir" min="0" max="359" step="1" value="128" type="range"></div>
   <div class="ctrl"><label>航向 <b id="vHead">045°</b></label><input id="head" min="0" max="359" step="1" value="45" type="range"></div>
   <div class="ctrl"><label>主机负荷 <b id="vEngine">72%</b></label><input id="engine" min="0" max="100" step="1" value="72" type="range"></div>
   <div class="ctrl"><label>海况等级 <b id="vSea">2 级</b></label><input id="seaState" min="0" max="6" step="1" value="2" type="range"></div>
 
-  <div class="panel-hdr" style="margin-top:10px;">回放控制</div>
+  <div class="linkage-note" style="margin-top:10px;">
+    <b>本页定位：</b>用于讲解“废气余能 → 透平取能 → 滚筒帆旋转 → 马格努斯推力”的能量传递机理。左侧参数只改变演示工况，不代表真实船舶控制指令。
+  </div>
+
+  <div class="panel-hdr" style="margin-top:10px;">机理演示控制</div>
   <div class="play">
     <button id="playBtn" onclick="toggleAuto()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
@@ -257,40 +302,59 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
     <button onclick="resetView()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.5 17.5A9 9 0 102 12"/></svg>
     </button>
-    <button onclick="toast('已切换为跟随视角')">
+    <button onclick="toast('视角已切换：跟随能量链路')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
     </button>
     <span style="font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;font-family:'Geist Mono',monospace;" id="playText">02:18:35 / 06:00:00</span>
   </div>
   <div class="mode-btns" style="margin-top:8px;">
-    <button class="btn on" onclick="setMode('auto',this)">智能自动</button>
-    <button class="btn" onclick="setMode('eff',this)">助航</button>
-    <button class="btn" onclick="setMode('safe',this)">保护</button>
-    <button class="btn" onclick="setMode('bad',this)">安全</button>
+    <button class="btn on" onclick="setMode('eff',this)">标准助航</button>
+    <button class="btn" onclick="setMode('low',this)">低风待机</button>
+    <button class="btn" onclick="setMode('safe',this)">背压保护</button>
+    <button class="btn" onclick="setMode('bad',this)">海况锁定</button>
   </div>
 </aside>
 
 <section class="panel mini-map">
-  <div class="panel-hdr">航线与位置</div>
-  <div class="route-area">
-    <span class="map-dot m1"></span><span class="map-dot m2"></span><span class="map-dot m3"></span>
-    <div class="zoom"><button>+</button><button>−</button></div>
+  <div class="panel-hdr">演示流程</div>
+  <div class="route-area" style="padding:12px;font-size:11px;color:var(--muted);line-height:1.75;">
+    <b style="color:var(--text);">① 废气进入透平</b><br>
+    ② 机械传动带动滚筒帆旋转<br>
+    ③ 侧风产生马格努斯辅助推力<br>
+    ④ 安全规则判断是否旁通或锁定
+  </div>
+</section>
+
+<section class="panel energy-panel" aria-label="能量链路动画">
+  <div class="panel-hdr">核心能量链路</div>
+  <div class="energy-steps">
+    <div class="energy-step"><small>① 废气余能</small><b>主机排气</b></div>
+    <div class="energy-arrow"></div>
+    <div class="energy-step"><small>② 透平取能</small><b>轴流透平</b></div>
+    <div class="energy-arrow"></div>
+    <div class="energy-step"><small>③ 机械传动</small><b>减速增扭</b></div>
+    <div class="energy-arrow"></div>
+    <div class="energy-step"><small>④ 助航输出</small><b>滚筒帆推力</b></div>
   </div>
 </section>
 
 <aside class="panel right">
-  <div class="panel-hdr">运行概览</div>
+  <div class="panel-hdr">机理结果解释</div>
   <div class="metric-grid">
-    <div class="metric"><small>当前模式</small><b id="modeText">智能风助航行</b></div>
+    <div class="metric"><small>演示状态</small><b id="modeText">标准助航演示</b></div>
     <div class="ring"><span id="effRing">68%</span></div>
-    <div class="metric"><small>预计节能</small><b id="saveText">18.7%</b><em>样本工况估算</em></div>
-    <div class="metric"><small>累计节能</small><b>12.4 t</b><em>本地样本库回放</em></div>
+    <div class="metric"><small>节能趋势</small><b id="saveText">18.7%</b><em>样本工况估算</em></div>
+    <div class="metric"><small>机理链路</small><b>闭环</b><em>废气→透平→滚筒→推力</em></div>
   </div>
 
-  <div class="panel-hdr" style="margin-top:10px;">旋筒帆贡献</div>
+  <div class="linkage-note">
+    <b>当前解释：</b><span id="reasonText">侧风分量充足，废气取能进入滚筒帆，系统处于标准助航演示。</span>
+  </div>
+
+  <div class="panel-hdr" style="margin-top:10px;">四座滚筒帆推力分解</div>
   <div id="rotorList"></div>
 
-  <div class="panel-hdr" style="margin-top:10px;">能效与性能</div>
+  <div class="panel-hdr" style="margin-top:10px;">助航效果估算</div>
   <div class="metric-grid">
     <div class="metric"><small>风助推力</small><b id="sumThrust">519 kN</b><em>4座装置 · 简化模型计算</em></div>
     <div class="metric"><small>等效助航功率</small><b id="eqSave">1,060 kW</b><em>按推力、船速与折减系数估算</em></div>
@@ -299,10 +363,10 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
   </div>
 
   <div class="alert-line">
-    <p class="warn">前方海况可能升至 3 级</p>
-    <p>废气粒子展示"废能 → 滚筒"能量链路</p>
+    <p class="warn">当前为机理动画演示，不作为实船控制界面</p>
+    <p>橙色粒子表示废气余能流，绿色箭头表示马格努斯辅助推力。</p>
     <div class="linkage-note">
-      <b>风速联动：</b>拖动左侧风速后，旋筒帆旋转速度、推力箭头长度、废气粒子速度、节能估算与运行模式同步变化。
+      <b>观察提示：</b>拖动风速、风向和海况滑块，观察滚筒帆转速、推力箭头、废气粒子速度与安全模式如何同步变化。
     </div>
   </div>
 </aside>
@@ -310,11 +374,11 @@ canvas#main { position: absolute; inset: 0; width: 100%; height: 100%; display: 
 <div class="panel bottom" aria-label="图例">
   <span class="legend"><i class="dot dwind"></i>风向</span>
   <span class="legend"><i class="dot dthrust"></i>推力向量</span>
-  <span class="legend"><i class="dot dexhaust"></i>废气流动</span>
-  <span class="legend"><i class="dot drotor"></i>旋筒帆</span>
+  <span class="legend"><i class="dot dexhaust"></i>废气/旁通流</span>
+  <span class="legend"><i class="dot drotor"></i>透平/机械传动</span>
 </div>
 
-<div class="status-bar">系统就绪 &nbsp;|&nbsp; 数据正常 &nbsp;|&nbsp; Haifan v7.0</div>
+<div class="status-bar">机理演示页 &nbsp;|&nbsp; 简化模型展示 &nbsp;|&nbsp; 不作为实船控制指令</div>
 
 <script>
 const canvas=document.getElementById('main'),ctx=canvas.getContext('2d');
@@ -348,13 +412,18 @@ function toggleAuto(){
     ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
     : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
 }
-function resetView(){toast('视角已重置');}
+function resetView(){toast('演示视角已重置');}
 
 function setMode(m,btn){
   forced=m;
   document.querySelectorAll('.mode-btns .btn').forEach(x=>x.classList.remove('on'));
   btn.classList.add('on');
-  toast('模式切换：'+btn.textContent);
+  if(m==='auto'||m==='eff'){ $('wind').value=12.6; $('dir').value=128; $('engine').value=72; $('seaState').value=2; forced='auto'; }
+  if(m==='low'){ $('wind').value=5.0; $('dir').value=60; $('engine').value=70; $('seaState').value=2; }
+  if(m==='safe'){ $('wind').value=11.0; $('dir').value=95; $('engine').value=92; $('seaState').value=3; }
+  if(m==='bad'){ $('wind').value=14.0; $('dir').value=105; $('engine').value=74; $('seaState').value=6; }
+  updateLabels();
+  toast('演示场景：'+btn.textContent);
 }
 
 function val(id){return +$(id).value;}
@@ -367,7 +436,7 @@ function mode(){
   return 'eff';
 }
 function modeName(m){
-  return {eff:'智能风助航行',low:'低收益待机',safe:'主机保护',bad:'恶劣海况安全'}[m]||'智能自动';
+  return {eff:'标准助航演示',low:'低收益待机',safe:'主机保护',bad:'恶劣海况安全'}[m]||'标准助航';
 }
 
 function updateLabels(){
@@ -401,6 +470,8 @@ function updateLabels(){
   $('rotorList').innerHTML=html;
   $('sumThrust').textContent=thrust.toLocaleString()+' kN';
   $('eqSave').textContent=eq.toLocaleString()+' kW';
+  const reason={eff:'侧风分量充足，废气取能进入透平并驱动滚筒帆，绿色箭头显示辅助推力方向。',low:'风速偏低，滚筒帆收益不足，系统降低转速并进入低风待机演示。',safe:'主机负荷偏高，演示逻辑优先保障排烟安全，旁通保护权重提高。',bad:'海况等级较高，入口取能被抑制，系统进入海况锁定演示。'}[m]||'侧风分量充足，系统处于标准助航演示。';
+  if($('reasonText')) $('reasonText').textContent=reason;
 }
 
 function addExhaust(x,y,tx,ty){
@@ -420,14 +491,14 @@ function addExhaust(x,y,tx,ty){
 function drawOcean(){
   const w=innerWidth,h=innerHeight,wp=windPace();
   const grad=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,Math.max(w,h)*.72);
-  grad.addColorStop(0,'#dce8f0'); grad.addColorStop(1,'#c5d6e0');
+  grad.addColorStop(0,'#f1f5f9'); grad.addColorStop(0.5,'#e8edf3'); grad.addColorStop(1,'#dde4ec');
   ctx.fillStyle=grad; ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle='rgba(0,0,0,.035)'; ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(15,23,42,.04)'; ctx.lineWidth=1;
   const gx=(t*.22*wp)%40, gy=(t*.08*wp)%40;
   for(let x=-40;x<w+40;x+=40){ctx.beginPath();ctx.moveTo(x+gx,0);ctx.lineTo(x+gx,h);ctx.stroke();}
   for(let y=-40;y<h+40;y+=40){ctx.beginPath();ctx.moveTo(0,y+gy);ctx.lineTo(w,y+gy);ctx.stroke();}
   const angle=val('dir')*Math.PI/180;
-  ctx.strokeStyle='rgba(21,94,117,.09)'; ctx.lineWidth=1.3;
+  ctx.strokeStyle='rgba(21,94,117,.06)'; ctx.lineWidth=1.3;
   for(let i=0;i<22;i++){
     const base=(i*137 + t*3.2*wp)%(w+h);
     const x=(base*1.35)%w, y=(i*53 + t*1.15*wp)%h;
@@ -446,11 +517,102 @@ function drawArrow(x,y,ang,len,color,label){
   ctx.fillText(label,x+6,y-len-6);
 }
 
+
+function drawRoundLabel(x,y,title,sub,color){
+  ctx.save();
+  ctx.font='bold 11px "Geist","PingFang SC",sans-serif';
+  const w=Math.max(ctx.measureText(title).width, ctx.measureText(sub).width)+24;
+  const h=sub?38:25;
+  ctx.fillStyle='rgba(255,255,255,.90)';
+  ctx.strokeStyle='rgba(15,23,42,.14)'; ctx.lineWidth=1;
+  roundRect(x-w/2,y-h/2,w,h,10,true,true);
+  ctx.fillStyle=color; ctx.font='bold 11px "Geist","PingFang SC",sans-serif'; ctx.textAlign='center';
+  ctx.fillText(title,x,y-3);
+  if(sub){ctx.fillStyle='#64748b'; ctx.font='10px "Geist","PingFang SC",sans-serif'; ctx.fillText(sub,x,y+12);}
+  ctx.restore();
+}
+function roundRect(x,y,w,h,r,fill,stroke){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+  if(fill)ctx.fill(); if(stroke)ctx.stroke();
+}
+function drawFlowLine(points,color,label,phaseOffset=0){
+  ctx.save();
+  ctx.strokeStyle=color; ctx.lineWidth=4; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.shadowColor=color; ctx.shadowBlur=10;
+  ctx.beginPath(); ctx.moveTo(points[0].x,points[0].y);
+  for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x,points[i].y);
+  ctx.stroke(); ctx.shadowBlur=0;
+  // animated beads along each segment
+  for(let k=0;k<3;k++){
+    const p=((t*0.0065+phaseOffset+k/3)%1);
+    let total=0, segs=[];
+    for(let i=0;i<points.length-1;i++){let a=points[i],b=points[i+1];let d=Math.hypot(b.x-a.x,b.y-a.y);segs.push([a,b,d]);total+=d;}
+    let dist=p*total;
+    for(const [a,b,d] of segs){
+      if(dist<=d){
+        const f=dist/d; const x=a.x+(b.x-a.x)*f, y=a.y+(b.y-a.y)*f;
+        ctx.fillStyle=color; ctx.shadowColor=color; ctx.shadowBlur=12;
+        ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+        break;
+      }
+      dist-=d;
+    }
+  }
+  if(label){
+    const mid=points[Math.floor(points.length/2)];
+    ctx.fillStyle='rgba(15,23,42,.90)'; ctx.font='bold 11px "Geist","PingFang SC",sans-serif';
+    ctx.fillText(label,mid.x+8,mid.y-8);
+  }
+  ctx.restore();
+}
+function drawEnergyMechanism(cx,cy,heading,rotors,funnel){
+  const m=mode();
+  const turbine=localToScreen(0,78,cx,cy,heading);
+  const gear=localToScreen(0,40,cx,cy,heading);
+  const active=m!=='bad';
+  const exhaustColor= active ? '#d97706' : 'rgba(217,119,6,.28)';
+  const mechColor= active && m!=='safe' ? '#155e75' : 'rgba(21,94,117,.30)';
+  const thrustColor= m==='eff' ? '#0d9488' : (m==='low' ? 'rgba(13,148,136,.45)' : 'rgba(13,148,136,.22)');
+
+  // bigger labeled energy route on ship body
+  drawFlowLine([funnel,turbine],exhaustColor,'废气余能',0.05);
+  drawFlowLine([turbine,gear],mechColor,'透平取能',0.23);
+  rotors.forEach((r,i)=>drawFlowLine([gear,r],mechColor,'',0.12+i*.08));
+
+  drawRoundLabel(funnel.x+18,funnel.y+34,'主机废气','高温排气余能','#d97706');
+  drawRoundLabel(turbine.x-64,turbine.y,'轴流透平','取能做功','#155e75');
+  drawRoundLabel(gear.x+70,gear.y,'减速增扭','传动至滚筒','#155e75');
+
+  // magnus halo and thrust stream
+  rotors.forEach((r,i)=>{
+    const pulse=12+Math.sin(t*.035+i)*4;
+    ctx.save();
+    ctx.strokeStyle=thrustColor; ctx.lineWidth=2; ctx.globalAlpha=m==='bad'?0.18:0.55;
+    ctx.beginPath(); ctx.arc(r.x,r.y,30+pulse,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+  });
+  const out=localToScreen(0,-174,cx,cy,heading);
+  const nose=localToScreen(0,-220,cx,cy,heading);
+  if(m!=='bad') drawFlowLine([out,nose],thrustColor,'马格努斯辅助推力',0.44);
+
+  // safety bypass indicator
+  if(m==='safe'||m==='bad'){
+    const bypass1=localToScreen(0,120,cx,cy,heading);
+    const bypass2=localToScreen(64,145,cx,cy,heading);
+    drawFlowLine([funnel,bypass1,bypass2],'#a16207','旁通保护',0.31);
+    drawRoundLabel(bypass2.x+42,bypass2.y,'旁通阀','优先排烟安全','#a16207');
+  }
+}
+
 function drawShip(){
   const cx=innerWidth/2,cy=innerHeight/2+22,heading=val('head')*Math.PI/180;
   ctx.save();ctx.translate(cx,cy);ctx.rotate(heading);
   ctx.shadowBlur=20; ctx.shadowColor='rgba(0,0,0,.10)';
-  ctx.fillStyle='#1a3650'; ctx.beginPath();
+  ctx.fillStyle='#1e3a54'; ctx.beginPath();
   ctx.moveTo(0,-165); ctx.quadraticCurveTo(54,-125,45,125);
   ctx.quadraticCurveTo(0,170,-45,125); ctx.quadraticCurveTo(-54,-125,0,-165);
   ctx.closePath();ctx.fill();ctx.shadowBlur=0;
@@ -458,15 +620,17 @@ function drawShip(){
   ctx.fillStyle='rgba(0,0,0,.08)'; ctx.fillRect(-40,80,80,40);
 
   const rotors=[[-22,-88],[22,-88],[-22,24],[22,24]];
+  const rotorScreens=[];
   rotors.forEach((r,i)=>{
     ctx.fillStyle='rgba(21,94,117,.16)'; ctx.beginPath();
     ctx.arc(r[0],r[1],21,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#c8dae5'; ctx.beginPath();
     ctx.ellipse(r[0],r[1],12,19,0,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='#155e75'; ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(r[0],r[1],24,0,t*.08+i);ctx.stroke();
+    ctx.beginPath();ctx.arc(r[0],r[1],24,0,t*.045+i);ctx.stroke();
 
     const g=localToScreen(r[0],r[1],cx,cy,heading);
+    rotorScreens.push(g);
     drawArrow(g.x,g.y,(val('dir')-val('head')+95)*Math.PI/180,42,'#0d9488',
       '推力 '+Math.round(val('wind')*8+i*3)+' kN');
   });
@@ -477,6 +641,7 @@ function drawShip(){
     if(mode()!=='bad')addExhaust(funnel.x,funnel.y,target.x,target.y);
   });
   ctx.restore();
+  drawEnergyMechanism(cx,cy,heading,rotorScreens,funnel);
 
   drawArrow(cx+200,cy-140,val('dir')*Math.PI/180,45+val('wind')*2.1,'#3b82c4','风向 '+val('dir')+'°');
   drawArrow(cx+56,cy-140,val('head')*Math.PI/180,65,'#155e75','航向 '+val('head')+'°');
@@ -490,14 +655,14 @@ function drawParticles(){
   const wp=windPace();
   particles=particles.filter(p=>p.life>0);
   particles.forEach(p=>{
-    p.x+=p.vx*wp;p.y+=p.vy*wp;p.life-=0.8+wp*.15;
+    p.x+=p.vx*wp*0.48;p.y+=p.vy*wp*0.48;p.life-=0.42+wp*.08;
     ctx.fillStyle=p.color.replace(')',','+(Math.max(0,p.life)/120)+')').replace('rgba','rgba');
     ctx.beginPath();ctx.arc(p.x,p.y,Math.max(0.7,p.size*(p.life/120)),0,Math.PI*2);ctx.fill();
   });
 }
 
 function loop(){
-  if(auto)t+=windPace();
+  if(auto)t+=windPace()*0.55;
   updateLabels();
   drawOcean();
   drawParticles();
@@ -508,5 +673,6 @@ function loop(){
 ['wind','dir','head','engine','seaState'].forEach(id=>$(id).addEventListener('input',updateLabels));
 loop();
 </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
