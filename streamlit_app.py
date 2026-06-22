@@ -32,14 +32,14 @@ st.markdown(
 
 /* ── Design Tokens ── */
 :root{
-  --deepest:#02121f; --abyss:#041c33; --ocean:#062c4a; --midnight:#08385c;
-  --slate:#0d4f79; --steel:#126591; --surface:#0d5783;
-  --cyan:#22d3ee; --cyan-glow:rgba(34,211,238,.28); --cyan-subtle:rgba(34,211,238,.08);
-  --teal:#2dd4bf; --teal-glow:rgba(45,212,191,.28);
-  --amber:#fbbf24; --amber-subtle:rgba(251,191,36,.10);
-  --rose:#fb7185; --rose-subtle:rgba(251,113,133,.10);
-  --white:#f0f9ff; --ice:#e2f0fb; --mist:#b0cfe0; --fog:#7aa9c4; --haze:#5589a8;
-  --glass-border:rgba(186,230,253,.20); --glass-border-bright:rgba(186,230,253,.32);
+  --deepest:#121418; --abyss:#1a1d23; --ocean:#22262e; --midnight:#252a33;
+  --slate:#2a2f3a; --steel:#333845; --surface:#2e3340;
+  --amber-primary:#e8993a; --amber-glow:rgba(232,153,58,.22); --amber-subtle:rgba(232,153,58,.07);
+  --fir:#7eb798; --fir-glow:rgba(126,183,152,.22);
+  --amber-warn:#e8993a; --amber-warn-subtle:rgba(232,153,58,.08);
+  --rust:#e0554a; --rust-subtle:rgba(224,85,74,.08);
+  --white:#f0ece6; --ice:#e6e0d8; --mist:#b8b0a4; --fog:#8a8278; --haze:#6b635a;
+  --glass-border:rgba(200,175,140,.20); --glass-border-bright:rgba(200,175,140,.32);
   --glass-bg:rgba(255,255,255,.04); --glass-bg-strong:rgba(255,255,255,.08);
   --inner-highlight:inset 0 1px 0 rgba(255,255,255,.10);
   --shadow-card:0 20px 48px -12px rgba(0,0,0,.28);
@@ -52,14 +52,14 @@ st.markdown(
 /* ── Base Canvas ── */
 html,body,.stApp{
   background:
-    radial-gradient(ellipse 80% 50% at 75% -8%, rgba(34,211,238,.10), transparent 45%),
-    radial-gradient(ellipse 60% 40% at 18% 22%, rgba(45,212,191,.08), transparent 40%),
-    radial-gradient(ellipse 50% 60% at 90% 85%, rgba(129,140,248,.06), transparent 38%),
-    linear-gradient(170deg, var(--deepest) 0%, var(--abyss) 28%, var(--ocean) 62%, #05223a 100%);
+    radial-gradient(ellipse 80% 50% at 75% -8%, rgba(232,153,58,.10), transparent 45%),
+    radial-gradient(ellipse 60% 40% at 18% 22%, rgba(126,183,152,.08), transparent 40%),
+    radial-gradient(ellipse 50% 60% at 90% 85%, rgba(180,140,90,.06), transparent 38%),
+    linear-gradient(170deg, var(--deepest) 0%, var(--abyss) 28%, var(--ocean) 62%, #1f1a15 100%);
   color: var(--ice);
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
-.stApp:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(34,211,238,.020) 1px, transparent 1px),linear-gradient(90deg,rgba(34,211,238,.020) 1px, transparent 1px);background-size:52px 52px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,.12) 70%,transparent);}
+.stApp:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(232,153,58,.020) 1px, transparent 1px),linear-gradient(90deg,rgba(232,153,58,.020) 1px, transparent 1px);background-size:52px 52px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,.12) 70%,transparent);}
 .block-container{padding-top:1.2rem!important;padding-bottom:2.4rem!important;max-width:1520px!important;position:relative;z-index:1;}
 header,#MainMenu,footer,[data-testid="stToolbar"],[data-testid="stDecoration"],[data-testid="stStatusWidget"]{display:none!important;visibility:hidden!important;}
 
@@ -73,7 +73,7 @@ p,li,span,label,div,button,input,select,textarea{font-family:"Geist","PingFang S
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"]{
-  background:linear-gradient(175deg, var(--abyss) 0%, #052d4a 40%, var(--midnight) 100%)!important;
+  background:linear-gradient(175deg, var(--abyss) 0%, #1f1c18 40%, var(--midnight) 100%)!important;
   border-right:1px solid var(--glass-border)!important;
   box-shadow:2px 0 32px rgba(0,0,0,.18);
 }
@@ -81,36 +81,36 @@ p,li,span,label,div,button,input,select,textarea{font-family:"Geist","PingFang S
 [data-testid="stSidebar"] h1,[data-testid="stSidebar"] h2,[data-testid="stSidebar"] h3{color:var(--white)!important;font-weight:800;}
 [data-testid="stSidebar"] label{color:var(--mist)!important;font-size:13px;font-weight:600;}
 [data-testid="stSidebar"] span,[data-testid="stSidebar"] p{color:var(--mist)!important;}
-[data-testid="stSidebar"] hr{border-color:rgba(186,230,253,.14)!important;margin:16px 0!important;}
+[data-testid="stSidebar"] hr{border-color:rgba(200,175,140,.14)!important;margin:16px 0!important;}
 
 /* ── Buttons ── */
 .stButton>button{
   width:100%;min-height:2.6rem;border-radius:12px!important;
-  border:1px solid rgba(34,211,238,.30)!important;
-  background:linear-gradient(135deg,rgba(8,145,178,.82),rgba(14,116,144,.88))!important;
+  border:1px solid rgba(232,153,58,.30)!important;
+  background:linear-gradient(135deg,rgba(180,120,50,.82),rgba(160,100,40,.88))!important;
   color:var(--white)!important;font-weight:700!important;letter-spacing:.02em!important;
-  box-shadow:0 6px 18px rgba(14,165,233,.08), var(--inner-highlight)!important;
+  box-shadow:0 6px 18px rgba(210,145,60,.08), var(--inner-highlight)!important;
   transition:all .25s var(--ease-out)!important;
   font-size:14px!important;
 }
 .stButton>button:hover{
   transform:translateY(-1.5px);
-  border-color:rgba(34,211,238,.60)!important;
-  box-shadow:0 10px 28px rgba(34,211,238,.16), var(--inner-highlight)!important;
-  background:linear-gradient(135deg,rgba(6,182,212,.90),rgba(14,165,233,.90))!important;
+  border-color:rgba(232,153,58,.60)!important;
+  box-shadow:0 10px 28px rgba(232,153,58,.16), var(--inner-highlight)!important;
+  background:linear-gradient(135deg,rgba(200,130,55,.90),rgba(210,145,60,.90))!important;
 }
 .stButton>button:active{transform:translateY(0) scale(.985)!important;transition:all .08s var(--ease-out)!important;}
-.stButton>button[kind="secondary"]{background:rgba(255,255,255,.05)!important;border-color:rgba(186,230,253,.16)!important;}
+.stButton>button[kind="secondary"]{background:rgba(255,255,255,.05)!important;border-color:rgba(200,175,140,.16)!important;}
 
 /* ── Sliders ── */
 .stSlider [data-baseweb="slider"] div{color:var(--mist)!important;}
 .stSlider [data-baseweb="slider"] [class*="track"]{background:rgba(148,163,184,.20)!important;height:5px!important;border-radius:4px!important;}
 .stSlider [role="slider"]{
-  background:var(--cyan)!important;border:2px solid #e0fbff!important;
-  box-shadow:0 0 14px rgba(34,211,238,.32)!important;
+  background:var(--amber-primary)!important;border:2px solid #e0fbff!important;
+  box-shadow:0 0 14px rgba(232,153,58,.32)!important;
   transition:box-shadow .25s var(--ease-out)!important;
 }
-.stSlider [role="slider"]:hover{box-shadow:0 0 22px rgba(34,211,238,.48)!important;}
+.stSlider [role="slider"]:hover{box-shadow:0 0 22px rgba(232,153,58,.48)!important;}
 
 /* ── Inputs ── */
 .stNumberInput input,.stSelectbox [data-baseweb="select"]{
@@ -120,25 +120,25 @@ p,li,span,label,div,button,input,select,textarea{font-family:"Geist","PingFang S
 }
 
 /* ── Tabs ── */
-.stTabs [data-baseweb="tab-list"]{gap:.4rem;border-bottom:1px solid rgba(186,230,253,.14);padding:0 4px;}
+.stTabs [data-baseweb="tab-list"]{gap:.4rem;border-bottom:1px solid rgba(200,175,140,.14);padding:0 4px;}
 .stTabs [data-baseweb="tab"]{
   height:42px;padding:0 20px;
-  background:rgba(13,79,121,.35);border:1px solid rgba(186,230,253,.14);
+  background:rgba(45,35,22,.35);border:1px solid rgba(200,175,140,.14);
   border-bottom:none;border-radius:14px 14px 0 0;
   color:var(--mist)!important;font-weight:600;font-size:13px;
   transition:all .22s var(--ease-out);
 }
-.stTabs [data-baseweb="tab"]:hover{background:rgba(13,79,121,.55);color:var(--white)!important;}
+.stTabs [data-baseweb="tab"]:hover{background:rgba(45,35,22,.55);color:var(--white)!important;}
 .stTabs [aria-selected="true"]{
-  background:linear-gradient(180deg,rgba(34,211,238,.18),rgba(8,56,92,.78))!important;
+  background:linear-gradient(180deg,rgba(232,153,58,.18),rgba(40,30,20,.78))!important;
   color:var(--white)!important;font-weight:750;
   box-shadow:inset 0 2px 0 rgba(255,255,255,.20), 0 8px 20px rgba(0,0,0,.12);
-  border-color:rgba(34,211,238,.28)!important;
+  border-color:rgba(232,153,58,.28)!important;
 }
 
 /* ── Cards: Liquid Glass ── */
 .card{
-  background:linear-gradient(175deg,rgba(13,79,121,.74),rgba(8,56,90,.68));
+  background:linear-gradient(175deg,rgba(45,35,22,.74),rgba(8,56,90,.68));
   border:1px solid var(--glass-border);border-radius:var(--radius-lg);
   padding:20px 22px;box-shadow:var(--shadow-card), var(--inner-highlight);
   min-height:124px;transition:transform .25s var(--ease-out), box-shadow .25s var(--ease-out);
@@ -146,164 +146,164 @@ p,li,span,label,div,button,input,select,textarea{font-family:"Geist","PingFang S
 .card:hover{transform:translateY(-2px);box-shadow:0 24px 56px -14px rgba(0,0,0,.32), var(--inner-highlight);}
 .card.compact{min-height:auto;padding:14px 16px;}
 .k-label{font-size:11px;color:var(--fog);margin-bottom:8px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
-.k-value{font-size:32px;line-height:1.08;font-weight:900;color:var(--cyan);font-feature-settings:"tnum" 1;font-family:"Geist Mono","Cascadia Code",monospace;}
+.k-value{font-size:32px;line-height:1.08;font-weight:900;color:var(--amber-primary);font-feature-settings:"tnum" 1;font-family:"Geist Mono","Cascadia Code",monospace;}
 .k-sub{font-size:12px;color:var(--haze);margin-top:10px;}
 
 /* ── Status Pills ── */
-.mode-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;border:1px solid rgba(34,211,238,.30);background:rgba(34,211,238,.09);color:#cffafe;font-weight:700;font-size:13px;transition:all .2s var(--ease-out);}
-.mode-pill.green{border-color:rgba(45,212,191,.34);background:rgba(45,212,191,.10);color:#b2f0e6;}
+.mode-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;border:1px solid rgba(232,153,58,.30);background:rgba(232,153,58,.09);color:#f0e0c8;font-weight:700;font-size:13px;transition:all .2s var(--ease-out);}
+.mode-pill.green{border-color:rgba(126,183,152,.34);background:rgba(126,183,152,.10);color:#b2f0e6;}
 .mode-pill.yellow{border-color:rgba(251,191,36,.34);background:rgba(251,191,36,.08);color:#fde68a;}
 .mode-pill.red{border-color:rgba(251,113,133,.34);background:rgba(251,113,133,.08);color:#fecdd3;}
 .section-title{font-size:22px;font-weight:850;color:var(--white);margin:8px 0 16px;letter-spacing:-.015em;}
-.notice{background:linear-gradient(135deg,rgba(34,211,238,.08),rgba(45,212,191,.05));border:1px solid rgba(34,211,238,.20);border-radius:var(--radius-md);padding:16px 20px;color:#c7e9ff;line-height:1.85;}
+.notice{background:linear-gradient(135deg,rgba(232,153,58,.08),rgba(126,183,152,.05));border:1px solid rgba(232,153,58,.20);border-radius:var(--radius-md);padding:16px 20px;color:#c7e9ff;line-height:1.85;}
 
 /* ── Progress Bars ── */
 .bar-wrap{height:10px;background:rgba(148,163,184,.18);border-radius:999px;overflow:hidden;margin:10px 0 14px;}
-.bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:999px;box-shadow:0 0 10px rgba(34,211,238,.18);position:relative;}
+.bar{height:100%;background:linear-gradient(90deg,var(--amber-primary),var(--fir));border-radius:999px;box-shadow:0 0 10px rgba(232,153,58,.18);position:relative;}
 .bar::after{content:"";position:absolute;right:0;top:0;bottom:0;width:30px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.30));}
 
 /* ── Hero / Landing ── */
-.hero{position:relative;overflow:hidden;border:1px solid rgba(186,230,253,.22);border-radius:var(--radius-xl);padding:32px 34px;margin-bottom:20px;background:linear-gradient(135deg,rgba(8,56,92,.88),rgba(12,86,130,.78)),radial-gradient(ellipse 60% 50% at 78% 35%,rgba(34,211,238,.14),transparent 42%);box-shadow:var(--shadow-lg), var(--inner-highlight);}
-.hero:after{content:"";position:absolute;right:-100px;top:-80px;width:480px;height:300px;background:radial-gradient(circle,rgba(34,211,238,.14),transparent 60%);filter:blur(6px);}
+.hero{position:relative;overflow:hidden;border:1px solid rgba(200,175,140,.22);border-radius:var(--radius-xl);padding:32px 34px;margin-bottom:20px;background:linear-gradient(135deg,rgba(40,30,20,.88),rgba(55,40,25,.78)),radial-gradient(ellipse 60% 50% at 78% 35%,rgba(232,153,58,.14),transparent 42%);box-shadow:var(--shadow-lg), var(--inner-highlight);}
+.hero:after{content:"";position:absolute;right:-100px;top:-80px;width:480px;height:300px;background:radial-gradient(circle,rgba(232,153,58,.14),transparent 60%);filter:blur(6px);}
 .hero-title{font-size:44px;line-height:1.06;font-weight:950;color:var(--white);margin:0;letter-spacing:-.02em;}
-.hero-sub{margin-top:14px;font-size:17px;color:#9ee9ff;font-weight:700;}
+.hero-sub{margin-top:14px;font-size:17px;color:#d4b888;font-weight:700;}
 .hero-desc{max-width:880px;margin-top:12px;color:#a7cbe3;font-size:14px;line-height:1.85;}
 
 /* ── Status Chip (with breathing dot) ── */
-.status-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(45,212,191,.30);background:rgba(45,212,191,.08);color:#b2f0e6;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:700;}
-.dot{width:8px;height:8px;border-radius:999px;background:var(--teal);box-shadow:0 0 10px rgba(45,212,191,.50);animation:breathe 2.4s ease-in-out infinite;}
-@keyframes breathe{0%,100%{opacity:1;box-shadow:0 0 8px rgba(45,212,191,.45);}50%{opacity:.55;box-shadow:0 0 4px rgba(45,212,191,.20);}}
+.status-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(126,183,152,.30);background:rgba(126,183,152,.08);color:#b2f0e6;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:700;}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--fir);box-shadow:0 0 10px rgba(126,183,152,.50);animation:breathe 2.4s ease-in-out infinite;}
+@keyframes breathe{0%,100%{opacity:1;box-shadow:0 0 8px rgba(126,183,152,.45);}50%{opacity:.55;box-shadow:0 0 4px rgba(126,183,152,.20);}}
 
 /* ── Compare Card ── */
-.compare-card{border:1px solid rgba(45,212,191,.26);background:linear-gradient(135deg,rgba(8,56,92,.90),rgba(10,86,126,.74));border-radius:var(--radius-lg);padding:20px 22px;display:flex;justify-content:space-between;gap:20px;align-items:center;box-shadow:var(--shadow-card), var(--inner-highlight);}
+.compare-card{border:1px solid rgba(126,183,152,.26);background:linear-gradient(135deg,rgba(40,30,20,.90),rgba(50,38,24,.74));border-radius:var(--radius-lg);padding:20px 22px;display:flex;justify-content:space-between;gap:20px;align-items:center;box-shadow:var(--shadow-card), var(--inner-highlight);}
 .compare-card .big{font-size:18px;color:var(--white);font-weight:800;}
 .compare-card .good{color:#86efac;}
 .compare-card .line{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:12px;}
-.compare-card .line i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));width:72%;border-radius:999px;}
+.compare-card .line i{display:block;height:100%;background:linear-gradient(90deg,var(--amber-primary),var(--fir));width:72%;border-radius:999px;}
 
 /* ── Tables ── */
-.table-wrap{border:1px solid rgba(186,230,253,.18);border-radius:var(--radius-md);overflow:hidden;background:linear-gradient(175deg,rgba(7,54,88,.82),rgba(5,40,68,.74));box-shadow:var(--shadow-card);}
+.table-wrap{border:1px solid rgba(200,175,140,.18);border-radius:var(--radius-md);overflow:hidden;background:linear-gradient(175deg,rgba(35,25,18,.82),rgba(28,20,14,.74));box-shadow:var(--shadow-card);}
 .table-wrap table{width:100%;border-collapse:collapse;font-size:13px;}
 .table-wrap th,.table-wrap td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05);text-align:left;}
-.table-wrap th{background:rgba(186,230,253,.08);color:var(--ice);font-weight:700;font-size:12px;letter-spacing:.04em;}
+.table-wrap th{background:rgba(200,175,140,.08);color:var(--ice);font-weight:700;font-size:12px;letter-spacing:.04em;}
 .table-wrap td{color:#c8dff0;}
 .table-wrap tr:last-child td{border-bottom:none;}
 .table-wrap tbody tr{transition:background .15s var(--ease-out);}
 .table-wrap tbody tr:hover{background:rgba(255,255,255,.025);}
 
 /* ── Tags & Chips ── */
-.small-tag{display:inline-flex;padding:4px 11px;border-radius:999px;border:1px solid rgba(34,211,238,.22);background:rgba(34,211,238,.07);font-size:11px;color:#b6edff;font-weight:700;letter-spacing:.03em;}
-.route-badge{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid rgba(186,230,253,.16);background:var(--glass-bg);padding:10px 14px;border-radius:var(--radius-sm);margin-top:12px;}
+.small-tag{display:inline-flex;padding:4px 11px;border-radius:999px;border:1px solid rgba(232,153,58,.22);background:rgba(232,153,58,.07);font-size:11px;color:#b6edff;font-weight:700;letter-spacing:.03em;}
+.route-badge{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid rgba(200,175,140,.16);background:var(--glass-bg);padding:10px 14px;border-radius:var(--radius-sm);margin-top:12px;}
 .route-track{height:9px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-top:10px;}
-.route-track i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:999px;transition:width .6s var(--ease-out);}
-.toast-note{padding:12px 14px;border-radius:var(--radius-sm);border:1px solid rgba(34,211,238,.15);background:rgba(34,211,238,.05);color:#c8eaff;line-height:1.7;}
+.route-track i{display:block;height:100%;background:linear-gradient(90deg,var(--amber-primary),var(--fir));border-radius:999px;transition:width .6s var(--ease-out);}
+.toast-note{padding:12px 14px;border-radius:var(--radius-sm);border:1px solid rgba(232,153,58,.15);background:rgba(232,153,58,.05);color:#c8eaff;line-height:1.7;}
 
 /* ── Weather Grid ── */
 .weather-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:12px 0 18px;}
-.weather-card{border:1px solid rgba(34,211,238,.16);background:linear-gradient(175deg,rgba(6,24,42,.88),rgba(3,14,28,.74));border-radius:var(--radius-md);padding:16px;transition:border-color .25s var(--ease-out);}
-.weather-card:hover{border-color:rgba(34,211,238,.30);}
+.weather-card{border:1px solid rgba(232,153,58,.16);background:linear-gradient(175deg,rgba(26,18,12,.88),rgba(16,10,6,.74));border-radius:var(--radius-md);padding:16px;transition:border-color .25s var(--ease-out);}
+.weather-card:hover{border-color:rgba(232,153,58,.30);}
 .weather-card b{display:block;color:var(--white);font-size:26px;margin-top:6px;font-family:"Geist Mono",monospace;font-weight:700;}
 .status-ok{color:#86efac;font-weight:800;}.status-warn{color:#fde68a;font-weight:800;}.status-bad{color:#fecdd3;font-weight:800;}
 
 /* ── Pipeline ── */
 .pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px;}
-.pipe-node{border:1px solid rgba(34,211,238,.18);background:rgba(34,211,238,.05);border-radius:var(--radius-md);padding:14px;text-align:center;color:#cffafe;transition:all .25s var(--ease-out);}
-.pipe-node:hover{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.10);}
-.pipe-arrow{display:flex;align-items:center;justify-content:center;color:var(--cyan);font-weight:900;font-size:18px;}
+.pipe-node{border:1px solid rgba(232,153,58,.18);background:rgba(232,153,58,.05);border-radius:var(--radius-md);padding:14px;text-align:center;color:#f0e0c8;transition:all .25s var(--ease-out);}
+.pipe-node:hover{border-color:rgba(232,153,58,.35);background:rgba(232,153,58,.10);}
+.pipe-arrow{display:flex;align-items:center;justify-content:center;color:var(--amber-primary);font-weight:900;font-size:18px;}
 
 /* ── Twin Panel ── */
-.twin-panel{border:1px solid rgba(34,211,238,.14);background:linear-gradient(135deg,rgba(5,20,38,.88),rgba(3,15,28,.70));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-lg);}
-.health-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px rgba(45,212,191,.40);margin-right:7px;animation:breathe 2.4s ease-in-out infinite;}
-.health-dot.warn{background:var(--amber);box-shadow:0 0 10px rgba(251,191,36,.40);}
+.twin-panel{border:1px solid rgba(232,153,58,.14);background:linear-gradient(135deg,rgba(22,16,10,.88),rgba(16,10,6,.70));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-lg);}
+.health-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--fir);box-shadow:0 0 10px rgba(126,183,152,.40);margin-right:7px;animation:breathe 2.4s ease-in-out infinite;}
+.health-dot.warn{background:var(--amber-warn);box-shadow:0 0 10px rgba(251,191,36,.40);}
 
 /* ── Health Grid ── */
 .health-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:14px 0 20px;}
-.health-card{border:1px solid rgba(34,211,238,.18);background:linear-gradient(175deg,rgba(6,24,42,.90),rgba(3,14,28,.76));border-radius:var(--radius-md);padding:18px;box-shadow:0 16px 40px rgba(0,0,0,.16);transition:transform .25s var(--ease-out);}
+.health-card{border:1px solid rgba(232,153,58,.18);background:linear-gradient(175deg,rgba(26,18,12,.90),rgba(16,10,6,.76));border-radius:var(--radius-md);padding:18px;box-shadow:0 16px 40px rgba(0,0,0,.16);transition:transform .25s var(--ease-out);}
 .health-card:hover{transform:translateY(-2px);}
 .health-card span{display:block;font-size:11px;color:var(--fog);margin-bottom:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
-.health-card b{display:block;font-size:30px;color:var(--cyan);font-family:"Geist Mono",monospace;font-weight:700;}
+.health-card b{display:block;font-size:30px;color:var(--amber-primary);font-family:"Geist Mono",monospace;font-weight:700;}
 .health-card small{display:block;margin-top:8px;color:var(--haze);}
 
 /* ── Zone Chips ── */
 .zone-chip{display:inline-block;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.12);}
-.zone-high{background:rgba(34,211,238,.10);color:#cffafe;border-color:rgba(34,211,238,.28);}
-.zone-mid{background:rgba(45,212,191,.10);color:#ccfbf1;border-color:rgba(45,212,191,.28);}
+.zone-high{background:rgba(232,153,58,.10);color:#f0e0c8;border-color:rgba(232,153,58,.28);}
+.zone-mid{background:rgba(126,183,152,.10);color:#ccfbf1;border-color:rgba(126,183,152,.28);}
 .zone-low{background:rgba(148,163,184,.10);color:#e2e8f0;border-color:rgba(148,163,184,.25);}
 .zone-stop{background:rgba(129,140,248,.10);color:#e0e7ff;border-color:rgba(129,140,248,.28);}
-.report-card{border:1px solid rgba(186,230,253,.20);background:linear-gradient(135deg,rgba(8,56,92,.86),rgba(10,78,118,.68));border-radius:var(--radius-lg);padding:20px;line-height:1.9;color:#e4f2ff;}
+.report-card{border:1px solid rgba(200,175,140,.20);background:linear-gradient(135deg,rgba(40,30,20,.86),rgba(44,32,20,.68));border-radius:var(--radius-lg);padding:20px;line-height:1.9;color:#e4f2ff;}
 
 /* ── AI Engine ── */
 .ai-engine-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:16px 0 20px;}
-.ai-role-card{border:1px solid rgba(186,230,253,.20);background:linear-gradient(175deg,rgba(6,42,72,.88),rgba(6,58,88,.74));border-radius:var(--radius-md);padding:18px;min-height:152px;box-shadow:0 14px 32px rgba(0,0,0,.12);transition:transform .25s var(--ease-out);}
+.ai-role-card{border:1px solid rgba(200,175,140,.20);background:linear-gradient(175deg,rgba(32,22,16,.88),rgba(34,24,18,.74));border-radius:var(--radius-md);padding:18px;min-height:152px;box-shadow:0 14px 32px rgba(0,0,0,.12);transition:transform .25s var(--ease-out);}
 .ai-role-card:hover{transform:translateY(-2px);}
-.ai-role-card .role-icon{font-size:30px;margin-bottom:10px;font-weight:900;color:var(--cyan);font-family:"Geist Mono",monospace;}
+.ai-role-card .role-icon{font-size:30px;margin-bottom:10px;font-weight:900;color:var(--amber-primary);font-family:"Geist Mono",monospace;}
 .ai-role-card h4{color:var(--white);margin:0 0 10px;font-size:16px;font-weight:700;}
 .ai-role-card p{font-size:13px;line-height:1.75;color:var(--mist);}
-.decision-box{border:1px solid rgba(186,230,253,.20);background:linear-gradient(135deg,rgba(6,46,78,.94),rgba(8,72,108,.72));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-card);}
+.decision-box{border:1px solid rgba(200,175,140,.20);background:linear-gradient(135deg,rgba(32,22,16,.94),rgba(40,28,20,.72));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-card);}
 .decision-box b{color:var(--white);}
 .flow-row{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;gap:12px;align-items:stretch;margin:14px 0;}
-.flow-node{border:1px solid rgba(186,230,253,.20);background:rgba(186,230,253,.06);border-radius:var(--radius-sm);padding:14px;text-align:center;color:#e4f2ff;}
-.flow-arrow{display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:24px;font-weight:900;}
-.model-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(34,211,238,.22);background:rgba(34,211,238,.06);border-radius:999px;padding:6px 13px;font-size:12px;color:#cffafe;font-weight:700;margin:4px 6px 4px 0;}
-.warn-line{border-left:4px solid #60a5fa;background:rgba(96,165,250,.08);padding:12px 16px;border-radius:0 12px 12px 0;color:#dbeafe;margin:12px 0;}
-.safe-line{border-left:4px solid var(--cyan);background:rgba(34,211,238,.06);padding:12px 16px;border-radius:0 12px 12px 0;color:#cffafe;margin:12px 0;}
+.flow-node{border:1px solid rgba(200,175,140,.20);background:rgba(200,175,140,.06);border-radius:var(--radius-sm);padding:14px;text-align:center;color:#e4f2ff;}
+.flow-arrow{display:flex;align-items:center;justify-content:center;color:var(--amber-primary);font-size:24px;font-weight:900;}
+.model-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(232,153,58,.22);background:rgba(232,153,58,.06);border-radius:999px;padding:6px 13px;font-size:12px;color:#f0e0c8;font-weight:700;margin:4px 6px 4px 0;}
+.warn-line{border-left:4px solid #d4983a;background:rgba(210,150,80,.08);padding:12px 16px;border-radius:0 12px 12px 0;color:#dbeafe;margin:12px 0;}
+.safe-line{border-left:4px solid var(--amber-primary);background:rgba(232,153,58,.06);padding:12px 16px;border-radius:0 12px 12px 0;color:#f0e0c8;margin:12px 0;}
 
 /* ── Operations ── */
 .ops-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin:14px 0 20px;}
-.action-card{border:1px solid rgba(45,212,191,.26);background:linear-gradient(135deg,rgba(4,22,36,.94),rgba(5,34,40,.74));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-lg);}
+.action-card{border:1px solid rgba(126,183,152,.26);background:linear-gradient(135deg,rgba(4,22,36,.94),rgba(5,34,40,.74));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-lg);}
 .action-card h3{margin:0 0 10px;color:var(--white);font-size:20px;font-weight:750;}
-.action-card .action-main{font-size:30px;color:var(--cyan);font-weight:950;letter-spacing:-.015em;margin:10px 0;}
+.action-card .action-main{font-size:30px;color:var(--amber-primary);font-weight:950;letter-spacing:-.015em;margin:10px 0;}
 .action-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px;}
-.action-item{border:1px solid rgba(34,211,238,.16);background:rgba(34,211,238,.05);border-radius:var(--radius-sm);padding:14px;color:#c0e2f5;line-height:1.65;transition:border-color .2s var(--ease-out);}
-.action-item:hover{border-color:rgba(34,211,238,.30);}
+.action-item{border:1px solid rgba(232,153,58,.16);background:rgba(232,153,58,.05);border-radius:var(--radius-sm);padding:14px;color:#c0e2f5;line-height:1.65;transition:border-color .2s var(--ease-out);}
+.action-item:hover{border-color:rgba(232,153,58,.30);}
 .action-item b{color:var(--white);}
 .sop-card{border:1px solid rgba(251,191,36,.24);background:linear-gradient(135deg,rgba(36,26,6,.38),rgba(5,20,36,.78));border-radius:var(--radius-lg);padding:18px;line-height:1.85;color:#fde68a;}
 .sop-card b{color:#fff7cc;}
-.workstep{display:flex;gap:14px;align-items:flex-start;margin:12px 0;padding:14px;border:1px solid rgba(34,211,238,.15);background:var(--glass-bg);border-radius:var(--radius-sm);}
-.workstep .num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),#0ea5e9);color:#02121f;font-weight:950;flex:0 0 30px;}
+.workstep{display:flex;gap:14px;align-items:flex-start;margin:12px 0;padding:14px;border:1px solid rgba(232,153,58,.15);background:var(--glass-bg);border-radius:var(--radius-sm);}
+.workstep .num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--amber-primary),#d4983a);color:#12100e;font-weight:950;flex:0 0 30px;}
 .workstep b{color:var(--white);}
-.op-badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 12px;border:1px solid rgba(34,211,238,.20);background:rgba(34,211,238,.06);color:#cffafe;font-size:11px;font-weight:700;margin:2px 4px 2px 0;}
-.op-badge.green{border-color:rgba(45,212,191,.28);background:rgba(45,212,191,.08);color:#b2f0e6;}
+.op-badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 12px;border:1px solid rgba(232,153,58,.20);background:rgba(232,153,58,.06);color:#f0e0c8;font-size:11px;font-weight:700;margin:2px 4px 2px 0;}
+.op-badge.green{border-color:rgba(126,183,152,.28);background:rgba(126,183,152,.08);color:#b2f0e6;}
 .op-badge.yellow{border-color:rgba(251,191,36,.28);background:rgba(251,191,36,.08);color:#fde68a;}
 .op-badge.red{border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.08);color:#fecdd3;}
 
 /* ── Highlight Grid ── */
 .highlight-grid{display:grid;grid-template-columns:1.15fr 1.15fr 1fr;gap:16px;margin:18px 0 22px;}
-.highlight-card{border:1px solid rgba(186,230,253,.22);background:linear-gradient(135deg,rgba(10,68,106,.88),rgba(14,96,136,.74));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-card), var(--inner-highlight);transition:transform .25s var(--ease-out);min-height:160px;}
+.highlight-card{border:1px solid rgba(200,175,140,.22);background:linear-gradient(135deg,rgba(42,30,20,.88),rgba(52,38,24,.74));border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-card), var(--inner-highlight);transition:transform .25s var(--ease-out);min-height:160px;}
 .highlight-card:hover{transform:translateY(-2px);}
 .highlight-card h4{margin:12px 0 10px;color:var(--white);font-size:21px;font-weight:750;}
 .highlight-card p{color:#d6f0ff;font-size:13px;line-height:1.8;margin:0 0 14px;}
-.highlight-card .hl-num{font-size:14px;color:#a5f0fc;font-weight:800;font-family:"Geist Mono",monospace;}
-.source-chip{display:inline-flex;margin-top:10px;padding:3px 10px;border-radius:999px;border:1px solid rgba(186,230,253,.20);background:var(--glass-bg-strong);color:#cfeaff;font-size:11px;font-weight:700;}
+.highlight-card .hl-num{font-size:14px;color:#f5d78c;font-weight:800;font-family:"Geist Mono",monospace;}
+.source-chip{display:inline-flex;margin-top:10px;padding:3px 10px;border-radius:999px;border:1px solid rgba(200,175,140,.20);background:var(--glass-bg-strong);color:#cfeaff;font-size:11px;font-weight:700;}
 
 /* ── Evidence Web ── */
 .part-legend-web{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px;}
-.part-legend-web span{display:inline-flex;gap:6px;align-items:center;border:1px solid rgba(186,230,253,.22);background:var(--glass-bg-strong);border-radius:999px;padding:5px 12px;color:#ddf3ff;font-size:12px;}
-.part-legend-web b{color:#67e8f9;}
+.part-legend-web span{display:inline-flex;gap:6px;align-items:center;border:1px solid rgba(200,175,140,.22);background:var(--glass-bg-strong);border-radius:999px;padding:5px 12px;color:#ddf3ff;font-size:12px;}
+.part-legend-web b{color:#f0c78e;}
 .energy-flow-web{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr;gap:10px;margin:14px 0 18px;}
-.energy-flow-web .node{border:1px solid rgba(186,230,253,.20);border-radius:var(--radius-sm);padding:14px;text-align:center;background:var(--glass-bg-strong);color:var(--white);font-weight:800;transition:border-color .2s var(--ease-out);}
-.energy-flow-web .node:hover{border-color:rgba(34,211,238,.40);}
-.energy-flow-web .arrow{display:flex;align-items:center;justify-content:center;color:#67e8f9;font-size:22px;font-weight:900;}
+.energy-flow-web .node{border:1px solid rgba(200,175,140,.20);border-radius:var(--radius-sm);padding:14px;text-align:center;background:var(--glass-bg-strong);color:var(--white);font-weight:800;transition:border-color .2s var(--ease-out);}
+.energy-flow-web .node:hover{border-color:rgba(232,153,58,.40);}
+.energy-flow-web .arrow{display:flex;align-items:center;justify-content:center;color:#f0c78e;font-size:22px;font-weight:900;}
 .evidence-web{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:14px 0 20px;}
-.evidence-web-card{border:1px solid rgba(186,230,253,.20);background:linear-gradient(135deg,var(--glass-bg-strong),rgba(34,211,238,.05));border-radius:var(--radius-md);padding:18px;transition:transform .25s var(--ease-out);}
+.evidence-web-card{border:1px solid rgba(200,175,140,.20);background:linear-gradient(135deg,var(--glass-bg-strong),rgba(232,153,58,.05));border-radius:var(--radius-md);padding:18px;transition:transform .25s var(--ease-out);}
 .evidence-web-card:hover{transform:translateY(-2px);}
-.evidence-web-card img{width:100%;height:260px;object-fit:contain;background:#fff;border-radius:14px;border:1px solid rgba(186,230,253,.14);}
+.evidence-web-card img{width:100%;height:260px;object-fit:contain;background:#fff;border-radius:14px;border:1px solid rgba(200,175,140,.14);}
 .evidence-web-card h4{margin:12px 0 8px;color:var(--white);}
 .evidence-web-card p{color:#c8e8f8;font-size:13px;line-height:1.75;}
 .boundary-web{border:1px solid rgba(251,191,36,.22);background:linear-gradient(135deg,var(--glass-bg-strong),rgba(251,191,36,.06));border-radius:var(--radius-lg);padding:18px 20px;line-height:1.9;color:#fff7cc;}
 .boundary-web li{margin:8px 0;}
-.linkage-web{border:1px solid rgba(186,230,253,.22);background:var(--glass-bg-strong);border-radius:var(--radius-md);padding:16px 18px;line-height:1.85;color:#ddf3ff;margin:12px 0 20px;}
+.linkage-web{border:1px solid rgba(200,175,140,.22);background:var(--glass-bg-strong);border-radius:var(--radius-md);padding:16px 18px;line-height:1.85;color:#ddf3ff;margin:12px 0 20px;}
 
 /* ── Landing Shell ── */
 .landing-shell{display:grid;grid-template-columns:1.45fr .8fr;gap:20px;margin-bottom:18px;}
-.landing-main,.landing-side{position:relative;overflow:hidden;border:1px solid rgba(186,230,253,.24);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg), var(--inner-highlight);}
+.landing-main,.landing-side{position:relative;overflow:hidden;border:1px solid rgba(200,175,140,.24);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg), var(--inner-highlight);}
 .landing-main{
   padding:34px 36px;min-height:300px;
-  background:linear-gradient(135deg,rgba(8,66,108,.90),rgba(12,98,138,.76)),
-             radial-gradient(ellipse 55% 45% at 78% 35%,rgba(34,211,238,.12),transparent 44%);
+  background:linear-gradient(135deg,rgba(40,30,20,.90),rgba(55,40,28,.76)),
+             radial-gradient(ellipse 55% 45% at 78% 35%,rgba(232,153,58,.12),transparent 44%);
 }
-.landing-main:after{content:"";position:absolute;right:-120px;top:-100px;width:460px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(186,230,253,.18),transparent 62%);filter:blur(5px);}
-.landing-side{padding:24px;min-height:300px;background:linear-gradient(160deg,rgba(14,88,128,.88),rgba(8,62,106,.82));}
+.landing-main:after{content:"";position:absolute;right:-120px;top:-100px;width:460px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(200,175,140,.18),transparent 62%);filter:blur(5px);}
+.landing-side{padding:24px;min-height:300px;background:linear-gradient(160deg,rgba(50,38,24,.88),rgba(38,28,18,.82));}
 .landing-title{position:relative;z-index:2;font-size:46px;line-height:1.06;font-weight:980;color:var(--white);letter-spacing:-.02em;margin:16px 0 12px;}
 .landing-sub{position:relative;z-index:2;font-size:18px;font-weight:800;color:#b8f0ff;margin-bottom:10px;}
 .landing-desc{position:relative;z-index:2;max-width:900px;color:#d6eeff;line-height:1.9;font-size:14px;margin-bottom:20px;}
@@ -318,34 +318,34 @@ p,li,span,label,div,button,input,select,textarea{font-family:"Geist","PingFang S
 .side-item{display:flex;justify-content:space-between;gap:14px;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding:11px 0;color:#ddf3ff;}
 .side-item span{color:#a8d6f0;font-size:13px;font-weight:700;}
 .side-item b{color:var(--white);font-size:15px;text-align:right;}
-.route-card-polish{margin-top:16px;border:1px solid rgba(45,212,191,.22);background:rgba(8,66,108,.48);border-radius:var(--radius-md);padding:15px;}
+.route-card-polish{margin-top:16px;border:1px solid rgba(126,183,152,.22);background:rgba(40,30,20,.48);border-radius:var(--radius-md);padding:15px;}
 .route-card-polish .route-top{display:flex;justify-content:space-between;color:#dffaf5;font-weight:800;}
 .route-card-polish .route-track{margin-top:12px;height:10px;background:rgba(255,255,255,.12);}
-.scenario-panel{border:1px solid rgba(186,230,253,.18);border-radius:var(--radius-lg);padding:18px 20px;margin:14px 0 18px;background:linear-gradient(135deg,rgba(8,66,108,.68),rgba(14,96,136,.52));box-shadow:var(--shadow-card);}
+.scenario-panel{border:1px solid rgba(200,175,140,.18);border-radius:var(--radius-lg);padding:18px 20px;margin:14px 0 18px;background:linear-gradient(135deg,rgba(40,30,20,.68),rgba(52,38,24,.52));box-shadow:var(--shadow-card);}
 .scenario-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:14px;}
 .scenario-head h3{margin:0;color:var(--white);font-size:20px;}
 .scenario-head p{margin:6px 0 0;color:#cae8f8;font-size:13px;}
 .demo-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:10px 0 22px;}
-.demo-step{border:1px solid rgba(186,230,253,.18);background:rgba(255,255,255,.05);border-radius:var(--radius-md);padding:16px 17px;transition:all .25s var(--ease-out);}
-.demo-step:hover{border-color:rgba(34,211,238,.30);background:rgba(255,255,255,.08);transform:translateY(-2px);}
-.demo-step .num{display:inline-flex;width:30px;height:30px;border-radius:50%;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--cyan),#0ea5e9);color:#02121f;font-weight:950;margin-bottom:10px;}
+.demo-step{border:1px solid rgba(200,175,140,.18);background:rgba(255,255,255,.05);border-radius:var(--radius-md);padding:16px 17px;transition:all .25s var(--ease-out);}
+.demo-step:hover{border-color:rgba(232,153,58,.30);background:rgba(255,255,255,.08);transform:translateY(-2px);}
+.demo-step .num{display:inline-flex;width:30px;height:30px;border-radius:50%;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--amber-primary),#d4983a);color:#12100e;font-weight:950;margin-bottom:10px;}
 .demo-step h4{margin:0 0 8px;color:var(--white);font-size:16px;}
 .demo-step p{margin:0;color:#cae8f8;font-size:12px;line-height:1.75;}
 
 /* ── Portal / Data Status ── */
 .portal-top{display:flex;justify-content:flex-end;margin:-2px 0 14px;}
-.portal-top a{text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(186,230,253,.28);color:#074764;font-weight:750;font-size:13px;box-shadow:0 10px 24px rgba(0,0,0,.12);transition:all .2s var(--ease-out);}
+.portal-top a{text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(200,175,140,.28);color:#4a3828;font-weight:750;font-size:13px;box-shadow:0 10px 24px rgba(0,0,0,.12);transition:all .2s var(--ease-out);}
 .portal-top a:hover{background:rgba(255,255,255,.92);transform:translateY(-1px);box-shadow:0 14px 30px rgba(0,0,0,.16);}
 .data-status-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:14px 0 20px;}
-.data-status-item{border:1px solid rgba(186,230,253,.22);background:linear-gradient(135deg,var(--glass-bg-strong),rgba(34,211,238,.06));border-radius:var(--radius-md);padding:15px 17px;box-shadow:0 10px 26px rgba(0,0,0,.08);transition:transform .25s var(--ease-out);}
+.data-status-item{border:1px solid rgba(200,175,140,.22);background:linear-gradient(135deg,var(--glass-bg-strong),rgba(232,153,58,.06));border-radius:var(--radius-md);padding:15px 17px;box-shadow:0 10px 26px rgba(0,0,0,.08);transition:transform .25s var(--ease-out);}
 .data-status-item:hover{transform:translateY(-1px);}
 .data-status-item small{display:block;color:#b6e0ff;font-size:11px;margin-bottom:8px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
 .data-status-item b{display:block;color:var(--white);font-size:15px;line-height:1.5;}
 .reason-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0 18px;}
-.reason-card{border:1px solid rgba(186,230,253,.20);background:linear-gradient(135deg,var(--glass-bg-strong),rgba(34,211,238,.05));border-radius:var(--radius-md);padding:16px 17px;line-height:1.8;color:#ddf3ff;transition:border-color .2s var(--ease-out);}
-.reason-card:hover{border-color:rgba(34,211,238,.32);}
+.reason-card{border:1px solid rgba(200,175,140,.20);background:linear-gradient(135deg,var(--glass-bg-strong),rgba(232,153,58,.05));border-radius:var(--radius-md);padding:16px 17px;line-height:1.8;color:#ddf3ff;transition:border-color .2s var(--ease-out);}
+.reason-card:hover{border-color:rgba(232,153,58,.32);}
 .reason-card b{display:block;color:var(--white);margin-bottom:8px;font-size:15px;}
-.term-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(186,230,253,.22);background:var(--glass-bg-strong);border-radius:999px;padding:6px 12px;color:#e4f7ff;font-size:12px;font-weight:700;margin:3px 6px 3px 0;}
+.term-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(200,175,140,.22);background:var(--glass-bg-strong);border-radius:999px;padding:6px 12px;color:#e4f7ff;font-size:12px;font-weight:700;margin:3px 6px 3px 0;}
 
 /* ── Scroll Reveal Animations ── */
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
@@ -360,14 +360,14 @@ p,li,span,label,div,button,input,select,textarea{font-family:"Geist","PingFang S
 .health-card:nth-child(3){animation-delay:.14s;}.health-card:nth-child(4){animation-delay:.20s;}
 
 /* ── Shimmer Loading ── */
-.shimmer-bar{height:4px;background:linear-gradient(90deg,transparent 0%,rgba(34,211,238,.30) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 2s linear infinite;border-radius:2px;margin-top:6px;}
+.shimmer-bar{height:4px;background:linear-gradient(90deg,transparent 0%,rgba(232,153,58,.30) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 2s linear infinite;border-radius:2px;margin-top:6px;}
 
 /* ── Ship SVG Canvas ── */
-.ship-svg{width:100%;min-height:240px;border-radius:var(--radius-lg);background:radial-gradient(ellipse 50% 45% at 50% 42%,rgba(34,211,238,.10),rgba(6,22,40,.78) 52%,rgba(2,12,26,.88));border:1px solid rgba(34,211,238,.15);overflow:hidden;}
+.ship-svg{width:100%;min-height:240px;border-radius:var(--radius-lg);background:radial-gradient(ellipse 50% 45% at 50% 42%,rgba(232,153,58,.10),rgba(6,22,40,.78) 52%,rgba(2,12,26,.88));border:1px solid rgba(232,153,58,.15);overflow:hidden;}
 .footer-note{color:var(--haze);font-size:11px;text-align:right;margin-top:14px;}
 
 /* ── AI Orb ── */
-.ai-orb{width:78px;height:78px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:950;background:radial-gradient(circle at 30% 20%,#a5f0fc,var(--cyan) 45%,#0e7490 78%);color:#02121f;box-shadow:0 0 24px rgba(34,211,238,.20);animation:float 3.6s ease-in-out infinite;}
+.ai-orb{width:78px;height:78px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:950;background:radial-gradient(circle at 30% 20%,#f5d78c,var(--amber-primary) 45%,#8b6914 78%);color:#12100e;box-shadow:0 0 24px rgba(232,153,58,.20);animation:float 3.6s ease-in-out infinite;}
 
 /* ── Responsive ── */
 @media(max-width:1150px){
@@ -543,9 +543,9 @@ def alt_line(df, x, ys, title=""):
         alt.Chart(base)
         .mark_line(point=True, strokeWidth=3)
         .encode(
-            x=alt.X(f"{x}:Q", title=x, axis=alt.Axis(labelColor="#8eb6d5", titleColor="#9ee9ff", gridColor="rgba(148,163,184,.12)")),
+            x=alt.X(f"{x}:Q", title=x, axis=alt.Axis(labelColor="#8eb6d5", titleColor="#d4b888", gridColor="rgba(148,163,184,.12)")),
             y=alt.Y("数值:Q", title=None, axis=alt.Axis(labelColor="#8eb6d5", gridColor="rgba(148,163,184,.12)")),
-            color=alt.Color("指标:N", scale=alt.Scale(range=["#22d3ee", "#34d399", "#fbbf24"]), legend=alt.Legend(labelColor="#bfefff", titleColor="#bfefff")),
+            color=alt.Color("指标:N", scale=alt.Scale(range=["#22d3ee", "#7eb798", "#fbbf24"]), legend=alt.Legend(labelColor="#e8d8c0", titleColor="#e8d8c0")),
             tooltip=[x, "指标", alt.Tooltip("数值:Q", format=".1f")],
         )
         .properties(height=300, title=title)
@@ -561,9 +561,9 @@ def alt_bar(df, x, ys, title=""):
         alt.Chart(base)
         .mark_bar(cornerRadiusTopLeft=5, cornerRadiusTopRight=5)
         .encode(
-            x=alt.X(f"{x}:O", title=x, axis=alt.Axis(labelColor="#8eb6d5", titleColor="#9ee9ff", grid=False)),
+            x=alt.X(f"{x}:O", title=x, axis=alt.Axis(labelColor="#8eb6d5", titleColor="#d4b888", grid=False)),
             y=alt.Y("数值:Q", title=None, axis=alt.Axis(labelColor="#8eb6d5", gridColor="rgba(148,163,184,.12)")),
-            color=alt.Color("指标:N", scale=alt.Scale(range=["#22d3ee", "#34d399"]), legend=alt.Legend(labelColor="#bfefff", titleColor="#bfefff")),
+            color=alt.Color("指标:N", scale=alt.Scale(range=["#22d3ee", "#7eb798"]), legend=alt.Legend(labelColor="#e8d8c0", titleColor="#e8d8c0")),
             tooltip=[x, "指标", alt.Tooltip("数值:Q", format=".1f")],
         )
         .properties(height=310, title=title)
@@ -591,7 +591,7 @@ def sankey_figure(inlet, bypass):
                     "滚筒帆旋转",
                     "马格努斯推力"
                 ],
-                color=["#3b82b6", "#38bdf8", "#94a3b8", "#5eead4", "#22d3ee"],
+                color=["#3b82b6", "#e8b866", "#8a8278", "#5eead4", "#22d3ee"],
             ),
             link=dict(
                 source=[0, 0, 1, 3],
@@ -608,7 +608,7 @@ def sankey_figure(inlet, bypass):
     )
     fig.update_layout(
         title=dict(text="废气余能—滚筒帆—推力输出能量流", font=dict(color="#eaf6ff", size=16)),
-        font=dict(color="#dffaff", size=12, family="Microsoft YaHei"),
+        font=dict(color="#f0e8d8", size=12, family="Microsoft YaHei"),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=12, r=12, t=48, b=8),
@@ -896,7 +896,7 @@ def route_weather_map(df):
     fig.add_trace(go.Scattergeo(
         lon=df["lon"], lat=df["lat"], mode="lines+markers+text",
         text=df["海区"], textposition="top center",
-        marker=dict(size=10, color=df["风助潜力"], colorscale=[[0,"#c7f9ff"],[0.35,"#7dd3fc"],[0.7,"#38bdf8"],[1,"#0ea5e9"]], colorbar=dict(title="风助潜力"), line=dict(width=1, color="#dffaff")),
+        marker=dict(size=10, color=df["风助潜力"], colorscale=[[0,"#f5e6d0"],[0.35,"#d4b896"],[0.7,"#e8b866"],[1,"#d4983a"]], colorbar=dict(title="风助潜力"), line=dict(width=1, color="#f0e8d8")),
         line=dict(width=3, color="#22d3ee"),
         hovertemplate="%{text}<br>风速 %{customdata[0]} m/s<br>浪高 %{customdata[1]} m<br>流速 %{customdata[3]} kn<br>策略 %{customdata[2]}<extra></extra>",
         customdata=np.stack([df["风速(m/s)"], df["浪高(m)"], df["建议策略"], df["流速(kn)"], df["风险等级"]], axis=-1),
@@ -914,7 +914,7 @@ def route_weather_map(df):
         height=430, margin=dict(l=5, r=5, t=30, b=5),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#dffaff", family="Microsoft YaHei"),
+        font=dict(color="#f0e8d8", family="Microsoft YaHei"),
         title=dict(text="典型航区气象/海况分布：节点风浪、海流与运行策略", font=dict(color="#eaf6ff", size=16)),
     )
     return fig
@@ -941,7 +941,7 @@ def sensor_latency_chart():
         "延迟(ms)": [80, 45, 30, 120, 60, 55],
     })
     fig = go.Figure(go.Bar(x=df["链路"], y=df["延迟(ms)"], marker=dict(color="#22d3ee")))
-    fig.update_layout(height=300, margin=dict(l=10, r=10, t=35, b=10), title="实船接口链路延迟示意", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#dffaff", family="Microsoft YaHei"), yaxis=dict(gridcolor="rgba(148,163,184,.15)"), xaxis=dict(gridcolor="rgba(148,163,184,.08)"))
+    fig.update_layout(height=300, margin=dict(l=10, r=10, t=35, b=10), title="实船接口链路延迟示意", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#f0e8d8", family="Microsoft YaHei"), yaxis=dict(gridcolor="rgba(148,163,184,.15)"), xaxis=dict(gridcolor="rgba(148,163,184,.08)"))
     return fig
 
 
@@ -976,7 +976,7 @@ def twin_replay_figure(df, idx):
         lon=df["lon"], lat=df["lat"], mode="lines", line=dict(width=3, color="rgba(125,211,252,.70)"), name="计划航线"
     ))
     fig.add_trace(go.Scattergeo(
-        lon=df.loc[:idx, "lon"], lat=df.loc[:idx, "lat"], mode="lines+markers", line=dict(width=5, color="#34d399"), marker=dict(size=7, color="#34d399"), name="已回放轨迹"
+        lon=df.loc[:idx, "lon"], lat=df.loc[:idx, "lat"], mode="lines+markers", line=dict(width=5, color="#7eb798"), marker=dict(size=7, color="#7eb798"), name="已回放轨迹"
     ))
     fig.add_trace(go.Scattergeo(
         lon=[current["lon"]], lat=[current["lat"]], mode="markers+text", text=["当前船位"], textposition="top center", marker=dict(size=18, color="#fbbf24", symbol="star"), name="当前船位"
@@ -984,7 +984,7 @@ def twin_replay_figure(df, idx):
     fig.update_geos(
         projection_type="natural earth", showcountries=True, countrycolor="rgba(148,163,184,.28)", showland=True, landcolor="rgba(15,40,58,.8)", showocean=True, oceancolor="rgba(2,12,28,.95)", lataxis=dict(showgrid=True, gridcolor="rgba(56,189,248,.14)"), lonaxis=dict(showgrid=True, gridcolor="rgba(56,189,248,.14)"),
     )
-    fig.update_layout(height=430, margin=dict(l=5, r=5, t=30, b=5), title=f"数字孪生回放：{current['时间']} · {current['海区']}", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#dffaff", family="Microsoft YaHei"))
+    fig.update_layout(height=430, margin=dict(l=5, r=5, t=30, b=5), title=f"数字孪生回放：{current['时间']} · {current['海区']}", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#f0e8d8", family="Microsoft YaHei"))
     return fig
 
 
@@ -1095,7 +1095,7 @@ def assist_zone_map(zone_df):
         fig.add_trace(go.Scattergeo(
             lon=part["lon"], lat=part["lat"], mode="markers+text",
             text=part["海区"], textposition="top center",
-            marker=dict(size=12, color=colors.get(zone, "#94a3b8"), line=dict(width=1, color="#dffaff")),
+            marker=dict(size=12, color=colors.get(zone, "#8a8278"), line=dict(width=1, color="#f0e8d8")),
             name=zone,
             customdata=np.stack([part["风速(m/s)"], part["浪高(m)"], part["估算推力(kN)"], part["节能潜力(%)"], part["建议策略"]], axis=-1),
             hovertemplate="%{text}<br>风速 %{customdata[0]} m/s<br>浪高 %{customdata[1]} m<br>推力 %{customdata[2]} kN<br>节能潜力 %{customdata[3]}%<br>%{customdata[4]}<extra></extra>",
@@ -1111,7 +1111,7 @@ def assist_zone_map(zone_df):
     fig.update_layout(
         height=430, margin=dict(l=5, r=5, t=30, b=5),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#dffaff", family="Microsoft YaHei"),
+        font=dict(color="#f0e8d8", family="Microsoft YaHei"),
         title=dict(text="典型航区识别：高效、谨慎、待机与锁定区段分布", font=dict(color="#eaf6ff", size=16)),
         legend=dict(orientation="h", y=-0.05),
     )
@@ -1125,7 +1125,7 @@ def assist_zone_distance_chart(summary_df):
         x=clean["助航区类型"], y=clean["代表距离_nm"],
         marker=dict(color=["#22d3ee" if x == "高效助航区" else "#5eead4" if x == "谨慎运行区" else "#bfdbfe" if x == "低收益待机区" else "#818cf8" for x in clean["助航区类型"]], line=dict(color="rgba(255,255,255,.28)", width=0.8))
     ))
-    fig.update_layout(height=300, title=dict(text="典型航区代表航程分布", font=dict(color="#eaf6ff", size=16)), margin=dict(l=10, r=10, t=45, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#dffaff", family="Microsoft YaHei"), yaxis_title="代表距离 / nm", yaxis=dict(gridcolor="rgba(148,163,184,.15)"))
+    fig.update_layout(height=300, title=dict(text="典型航区代表航程分布", font=dict(color="#eaf6ff", size=16)), margin=dict(l=10, r=10, t=45, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#f0e8d8", family="Microsoft YaHei"), yaxis_title="代表距离 / nm", yaxis=dict(gridcolor="rgba(148,163,184,.15)"))
     return fig
 
 
@@ -1171,7 +1171,7 @@ def carbon_ledger_chart(stats):
     fig = go.Figure()
     fig.add_trace(go.Bar(name="基准工况", x=["燃油消耗(吨)", "CO₂排放(吨)"], y=[stats["base_fuel"], stats["co2_base"]], marker=dict(color="#bfd3e6")))
     fig.add_trace(go.Bar(name="开启海帆智擎", x=["燃油消耗(吨)", "CO₂排放(吨)"], y=[stats["improved_fuel"], stats["co2_after"]], marker=dict(color="#22d3ee")))
-    fig.update_layout(barmode="group", height=330, title=dict(text="航次碳账本：节油与减排对比", font=dict(color="#eaf6ff", size=16)), margin=dict(l=10, r=10, t=50, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#dffaff", family="Microsoft YaHei"), yaxis=dict(gridcolor="rgba(148,163,184,.15)"))
+    fig.update_layout(barmode="group", height=330, title=dict(text="航次碳账本：节油与减排对比", font=dict(color="#eaf6ff", size=16)), margin=dict(l=10, r=10, t=50, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#f0e8d8", family="Microsoft YaHei"), yaxis=dict(gridcolor="rgba(148,163,184,.15)"))
     return fig
 
 
@@ -1233,12 +1233,12 @@ def health_radar_chart(health_df):
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(
         r=health_df["健康度(%)"], theta=health_df["部件"], fill="toself",
-        name="设备健康度", line=dict(color="#34d399"), fillcolor="rgba(52,211,153,.18)"
+        name="设备健康度", line=dict(color="#7eb798"), fillcolor="rgba(126,183,152,.18)"
     ))
     fig.update_layout(
         polar=dict(radialaxis=dict(visible=True, range=[50, 100], gridcolor="rgba(148,163,184,.18)"), angularaxis=dict(gridcolor="rgba(148,163,184,.12)")),
         height=410, title="设备健康雷达图", margin=dict(l=20, r=20, t=55, b=20),
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#dffaff", family="Microsoft YaHei")
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#f0e8d8", family="Microsoft YaHei")
     )
     return fig
 
@@ -1446,14 +1446,14 @@ def ai_feature_chart(factors):
     data = factors.sort_values("相对贡献(%)", ascending=True)
     fig = go.Figure(go.Bar(
         x=data["相对贡献(%)"], y=data["影响因素"], orientation="h",
-        marker=dict(color=["#9adcf9", "#74d7f7", "#4fd1f3", "#36c5ef", "#22b8e6", "#0ea5e9"][-len(data):]),
+        marker=dict(color=["#e0c8a0", "#d4b878", "#c89848", "#b87828", "#a86818", "#d4983a"][-len(data):]),
         text=[f"{v:.1f}%" for v in data["相对贡献(%)"]], textposition="outside"
     ))
     fig.update_layout(
         height=360, title=dict(text="本次决策依据：关键因素贡献度", font=dict(color="#eaf6ff", size=16)),
         margin=dict(l=10, r=30, t=55, b=20),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#dffaff", family="Microsoft YaHei"),
+        font=dict(color="#f0e8d8", family="Microsoft YaHei"),
         xaxis=dict(title="相对贡献 / %", gridcolor="rgba(148,163,184,.15)"),
         yaxis=dict(gridcolor="rgba(148,163,184,.08)")
     )
@@ -1465,7 +1465,7 @@ def ai_score_gauge(title, value, color="#22d3ee"):
         mode="gauge+number",
         value=value,
         number={"suffix": "/100", "font": {"color": "#eff9ff", "size": 34}},
-        title={"text": title, "font": {"color": "#dffaff", "size": 16}},
+        title={"text": title, "font": {"color": "#f0e8d8", "size": 16}},
         gauge={
             "axis": {"range": [0, 100], "tickcolor": "#8eb6d5"},
             "bar": {"color": color},
@@ -1479,7 +1479,7 @@ def ai_score_gauge(title, value, color="#22d3ee"):
             ],
         },
     ))
-    fig.update_layout(height=250, margin=dict(l=10, r=10, t=35, b=10), paper_bgcolor="rgba(0,0,0,0)", font=dict(color="#dffaff", family="Microsoft YaHei"))
+    fig.update_layout(height=250, margin=dict(l=10, r=10, t=35, b=10), paper_bgcolor="rgba(0,0,0,0)", font=dict(color="#f0e8d8", family="Microsoft YaHei"))
     return fig
 
 
@@ -1663,10 +1663,10 @@ rotor_positions = ROTOR_LAYOUTS.get(int(device_count), ROTOR_LAYOUTS[4])
 rotor_svg = "".join([
     f'<g transform="translate({x},{y})">'
     f'<circle r="23" fill="rgba(34,211,238,.16)" stroke="#22d3ee" stroke-width="2"/>'
-    f'<rect x="-13" y="-34" width="26" height="56" rx="10" fill="#dbeafe" stroke="#7dd3fc"/>'
+    f'<rect x="-13" y="-34" width="26" height="56" rx="10" fill="#dbeafe" stroke="#d4b896"/>'
     f'<rect x="-13" y="-34" width="26" height="56" rx="10" fill="url(#ship)" opacity=".16"/>'
-    f'<path d="M26 0 L68 {dy}" stroke="#34d399" stroke-width="5" marker-end="url(#arrow)"/>'
-    f'<text x="72" y="{dy+4}" fill="#34d399" font-size="14" font-weight="700">推力</text>'
+    f'<path d="M26 0 L68 {dy}" stroke="#7eb798" stroke-width="5" marker-end="url(#arrow)"/>'
+    f'<text x="72" y="{dy+4}" fill="#7eb798" font-size="14" font-weight="700">推力</text>'
     f'</g>'
     for x, y, dy in rotor_positions
 ])
@@ -1766,7 +1766,7 @@ with tabs[0]:
 <div class="compare-card">
   <div style="flex:1;">
     <div class="big">不开系统：<span style="color:#fbbf24;">CII评级 {cii['base_rating']}</span>　|　开启海帆智擎：<span class="good">CII评级 {cii['improved_rating']} ↑</span></div>
-    <div style="margin-top:8px;color:#bfefff;">年省燃油：<b>{cii['base_fuel']-cii['improved_fuel']:.0f} 吨</b>　|　CO₂减排：<b>{cii['base_co2']-cii['improved_co2']:.0f} 吨</b></div>
+    <div style="margin-top:8px;color:#e8d8c0;">年省燃油：<b>{cii['base_fuel']-cii['improved_fuel']:.0f} 吨</b>　|　CO₂减排：<b>{cii['base_co2']-cii['improved_co2']:.0f} 吨</b></div>
     <div class="line"><i></i></div>
   </div>
   <div style="text-align:right; min-width:260px;">
@@ -1813,20 +1813,20 @@ with tabs[0]:
 <div class="ship-svg">
 <svg viewBox="0 0 760 320" width="100%" height="320" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="ship" x1="0" x2="1"><stop offset="0" stop-color="#0f2a44"/><stop offset="1" stop-color="#1f5f8d"/></linearGradient>
+    <linearGradient id="ship" x1="0" x2="1"><stop offset="0" stop-color="#1a1612"/><stop offset="1" stop-color="#8b6914"/></linearGradient>
     <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
   <rect width="760" height="320" fill="transparent"/>
-  <g opacity=".18" stroke="#38bdf8" stroke-width="1">{''.join([f'<line x1="{i}" y1="0" x2="{i}" y2="320"/>' for i in range(40,760,55)])}{''.join([f'<line x1="0" y1="{i}" x2="760" y2="{i}"/>' for i in range(30,320,45)])}</g>
-  <path d="M165 235 C145 200 145 116 168 86 C232 40 510 40 610 95 C648 118 650 205 610 230 C510 285 245 285 165 235Z" fill="url(#ship)" stroke="#7dd3fc" stroke-width="2" opacity=".95"/>
-  <path d="M218 222 C205 198 204 122 220 96 C288 72 494 74 572 106 C598 132 598 198 572 219 C492 252 287 250 218 222Z" fill="#0b1828" opacity=".55" stroke="#94a3b8" stroke-width="1"/>
-  <path d="M635 160 L700 126 L700 194 Z" fill="#2563eb" opacity=".9" filter="url(#glow)"/><text x="664" y="113" fill="#7dd3fc" font-size="18" font-weight="700">航向 {int(abs(wind_angle))}°</text>
+  <g opacity=".18" stroke="#e8b866" stroke-width="1">{''.join([f'<line x1="{i}" y1="0" x2="{i}" y2="320"/>' for i in range(40,760,55)])}{''.join([f'<line x1="0" y1="{i}" x2="760" y2="{i}"/>' for i in range(30,320,45)])}</g>
+  <path d="M165 235 C145 200 145 116 168 86 C232 40 510 40 610 95 C648 118 650 205 610 230 C510 285 245 285 165 235Z" fill="url(#ship)" stroke="#d4b896" stroke-width="2" opacity=".95"/>
+  <path d="M218 222 C205 198 204 122 220 96 C288 72 494 74 572 106 C598 132 598 198 572 219 C492 252 287 250 218 222Z" fill="#181410" opacity=".55" stroke="#8a8278" stroke-width="1"/>
+  <path d="M635 160 L700 126 L700 194 Z" fill="#c07020" opacity=".9" filter="url(#glow)"/><text x="664" y="113" fill="#d4b896" font-size="18" font-weight="700">航向 {int(abs(wind_angle))}°</text>
   {rotor_svg}
-  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#34d399"/></marker></defs>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7eb798"/></marker></defs>
   <g opacity=".82"><path d="M180 245 C120 260 92 278 70 305" stroke="#f97316" stroke-width="9" stroke-linecap="round" opacity=".5"/><path d="M180 235 C110 226 85 219 58 202" stroke="#e0f2fe" stroke-width="10" stroke-linecap="round" opacity=".28"/></g>
-  <path d="M110 84 C200 30 410 22 650 62" stroke="#7dd3fc" stroke-dasharray="12 12" stroke-width="3" opacity=".75" fill="none"/>
-  <text x="36" y="50" fill="#9ee9ff" font-size="18" font-weight="700">相对风速 {rel_ws:.1f} m/s</text>
-  <path d="M50 78 L130 118" stroke="#38bdf8" stroke-width="5" marker-end="url(#wind)" filter="url(#glow)"/><defs><marker id="wind" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/></marker></defs>
+  <path d="M110 84 C200 30 410 22 650 62" stroke="#d4b896" stroke-dasharray="12 12" stroke-width="3" opacity=".75" fill="none"/>
+  <text x="36" y="50" fill="#d4b888" font-size="18" font-weight="700">相对风速 {rel_ws:.1f} m/s</text>
+  <path d="M50 78 L130 118" stroke="#e8b866" stroke-width="5" marker-end="url(#wind)" filter="url(#glow)"/><defs><marker id="wind" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e8b866"/></marker></defs>
 </svg>
 </div>
 """
@@ -2113,7 +2113,7 @@ with tabs[1]:
     with left_ai:
         st.plotly_chart(ai_score_gauge("智能助航评分", ai_result["assist_score"], "#22d3ee"), use_container_width=True, config={"displayModeBar": False}, key="ai_assist_score_gauge")
     with right_ai:
-        st.plotly_chart(ai_score_gauge("风险评分", ai_result["risk_score"], "#7dd3fc" if ai_result["risk_score"] < 55 else "#60a5fa"), use_container_width=True, config={"displayModeBar": False}, key="ai_risk_score_gauge")
+        st.plotly_chart(ai_score_gauge("风险评分", ai_result["risk_score"], "#d4b896" if ai_result["risk_score"] < 55 else "#d4983a"), use_container_width=True, config={"displayModeBar": False}, key="ai_risk_score_gauge")
 
     c_left, c_right = st.columns([1.15, 1])
     with c_left:
