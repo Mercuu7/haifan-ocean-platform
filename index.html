@@ -496,7 +496,7 @@ h3 { font-size: 1.1rem; font-weight: 650; letter-spacing: -0.015em; }
     <a href="showcase.html">项目展示</a>
     <a href="dashboard.html">驾驶舱</a>
     <a href="visualizer.html">可视化</a>
-    <a href="http://localhost:8501" target="_blank" onclick="openStreamlit();return false">仿真平台</a>
+    <a href="https://haifan-ocean-platform-vbukmsxmfunjbnuztntfva.streamlit.app/" target="_blank">仿真平台</a>
   </div>
 </nav>
 
@@ -583,7 +583,7 @@ h3 { font-size: 1.1rem; font-weight: 650; letter-spacing: -0.015em; }
         <p class="cmd-status">轻量评分模型 + 安全规则校核 — 工况参数 → 控制策略</p>
         <div class="shimmer-bar"></div>
         <div style="margin-top: 14px;">
-          <a class="tile-link" href="http://localhost:8501" target="_blank" onclick="openStreamlit();return false">
+          <a class="tile-link" href="https://haifan-ocean-platform-vbukmsxmfunjbnuztntfva.streamlit.app/" target="_blank">
             打开仿真平台
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
@@ -707,13 +707,10 @@ function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(function() { t.classList.remove('show'); }, 2400);
+  t._t = setTimeout(function() { t.classList.remove("show"); }, 2400);
 }
 function openStreamlit() {
-  window.open('http://localhost:8501', '_blank');
-  setTimeout(function() {
-    showToast('若未打开，请先运行：RUN_STREAMLIT.bat 或 streamlit run streamlit_app.py');
-  }, 800);
+  window.open("https://haifan-ocean-platform-vbukmsxmfunjbnuztntfva.streamlit.app/", "_blank");
 }
 
 /* ── IntersectionObserver: Scroll-triggered Reveals (MOTION_INTENSITY=6) ── */
