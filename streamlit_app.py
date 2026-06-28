@@ -2122,9 +2122,9 @@ with tabs[9]:
     for i, (rel_path, title, desc) in enumerate(evidence_items):
         with cols[i % 2]:
             img_path = img_root / rel_path
-            st.image(str(img_path), caption=f"{title}｜来源：结构建模图，待台架/实船验证", use_container_width=True)
+            st.image(str(img_path), caption=title, use_container_width=True)
             st.markdown(
-                f"<div class='evidence-web-card'><h4>{title}</h4><p>{desc}</p><span class='source-chip'>结构建模图</span><span class='source-chip'>待台架/实船验证</span></div>",
+                f"<div class='evidence-web-card'><h4>{title}</h4><p>{desc}</p></div>",
                 unsafe_allow_html=True,
             )
 
